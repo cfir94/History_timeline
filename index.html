@@ -494,6 +494,7 @@
     border-radius: 8px;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -516,6 +517,37 @@
     left: 0;
     border-style: dashed;
     box-shadow: -2px 0 0 var(--bg);
+  }
+  .kg-vbar.important { outline: 2.5px solid var(--gold); outline-offset: 1.5px; }
+  .kv-name { font-size: 11.5px; font-weight: 700; }
+  .kv-prophet { font-size: 9.5px; font-weight: 500; opacity: 0.88; margin-top: 1px; }
+  .prophet-dot {
+    position: absolute;
+    top: 4px; inset-inline-start: 4px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 1.5px rgba(255,250,240,.9);
+  }
+  .prophet-dot-legend {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 1.5px var(--surface), 0 0 0 2.5px var(--gold);
+    margin-inline-end: 6px;
+    vertical-align: -1px;
+  }
+  .kd-important {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-soft);
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin-inline-start: 6px;
+    vertical-align: middle;
   }
   .kg-detail {
     margin-top: 22px;
@@ -1790,49 +1822,50 @@ const KINGS_GANTT = {
     { name: "שלמה", start: 965, end: 928 },
   ],
   judah: [
-    { name: "רחבעם", start: 928, end: 911, prophet: "", row: 0, isEvent: false },
-    { name: "אבים", start: 911, end: 908, prophet: "", row: 0, isEvent: false },
-    { name: "אסא", start: 908, end: 867, prophet: "", row: 0, isEvent: false },
-    { name: "יהושפט", start: 867, end: 846, prophet: "", row: 0, isEvent: false },
-    { name: "יהורם", start: 846, end: 843, prophet: "", row: 0, isEvent: false },
-    { name: "אחזיה", start: 843, end: 842, prophet: "", row: 0, isEvent: false },
-    { name: "עתליה", start: 842, end: 836, prophet: "", row: 0, isEvent: false },
-    { name: "יהואש", start: 836, end: 798, prophet: "", row: 0, isEvent: false },
-    { name: "אמציה", start: 798, end: 769, prophet: "", row: 0, isEvent: false },
-    { name: "עוזיהו", start: 769, end: 733, prophet: "מיכה, ישעיהו", row: 0, isEvent: false },
-    { name: "יותם (שותף למלכות)", start: 758, end: 743, prophet: "מיכה, ישעיהו", row: 1, isEvent: false },
-    { name: "אחז", start: 733, end: 727, prophet: "מיכה, ישעיהו", row: 0, isEvent: false },
-    { name: "חזקיהו", start: 727, end: 698, prophet: "ישעיהו", row: 0, isEvent: false },
-    { name: "מנשה", start: 698, end: 642, prophet: "נחום", row: 0, isEvent: false },
-    { name: "אמון", start: 642, end: 640, prophet: "נחום", row: 0, isEvent: false },
-    { name: "יאשיהו", start: 640, end: 609, prophet: "צפניה, ירמיהו", row: 0, isEvent: false },
-    { name: "יהואחז", start: 609, end: 609, prophet: "ירמיהו", row: 0, isEvent: false },
-    { name: "יהויקים", start: 608, end: 598, prophet: "ירמיהו, חבקוק", row: 0, isEvent: false },
-    { name: "יהויכין", start: 598, end: 597, prophet: "ירמיהו, יחזקאל, דניאל", row: 0, isEvent: false },
-    { name: "צדקיהו", start: 597, end: 586, prophet: "ירמיהו, יחזקאל, עובדיה", row: 0, isEvent: false },
+    { name: "רחבעם", start: 928, end: 911, prophet: "", row: 0, isEvent: false, important: true },
+    { name: "אבים", start: 911, end: 908, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "אסא", start: 908, end: 867, prophet: "", row: 0, isEvent: false, important: true },
+    { name: "יהושפט", start: 867, end: 846, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "יהורם", start: 846, end: 843, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "אחזיה", start: 843, end: 842, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "עתליה", start: 842, end: 836, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "יהואש", start: 836, end: 798, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "אמציה", start: 798, end: 769, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "עוזיהו", start: 769, end: 733, prophet: "מיכה, ישעיהו", row: 0, isEvent: false, important: true },
+    { name: "יותם (שותף למלכות)", start: 758, end: 743, prophet: "מיכה, ישעיהו", row: 1, isEvent: false, important: false },
+    { name: "אחז", start: 733, end: 727, prophet: "מיכה, ישעיהו", row: 0, isEvent: false, important: false },
+    { name: "חזקיהו", start: 727, end: 698, prophet: "ישעיהו", row: 0, isEvent: false, important: true },
+    { name: "מנשה", start: 698, end: 642, prophet: "נחום", row: 0, isEvent: false, important: true },
+    { name: "אמון", start: 642, end: 640, prophet: "נחום", row: 0, isEvent: false, important: false },
+    { name: "יאשיהו", start: 640, end: 609, prophet: "צפניה, ירמיהו", row: 0, isEvent: false, important: true },
+    { name: "יהואחז", start: 609, end: 609, prophet: "ירמיהו", row: 0, isEvent: false, important: false },
+    { name: "יהויקים", start: 608, end: 598, prophet: "ירמיהו, חבקוק", row: 0, isEvent: false, important: false },
+    { name: "יהויכין", start: 598, end: 597, prophet: "ירמיהו, יחזקאל, דניאל", row: 0, isEvent: false, important: false },
+    { name: "צדקיהו", start: 597, end: 586, prophet: "ירמיהו, יחזקאל, עובדיה", row: 0, isEvent: false, important: true },
   ],
   israel: [
-    { name: "ירבעם בן נבט", start: 928, end: 907, prophet: "", row: 0, isEvent: false },
-    { name: "נדב", start: 907, end: 906, prophet: "", row: 0, isEvent: false },
-    { name: "בעשא", start: 906, end: 883, prophet: "", row: 0, isEvent: false },
-    { name: "אלה", start: 883, end: 882, prophet: "", row: 0, isEvent: false },
-    { name: "עמרי (ולפניו זמרי, תבני)", start: 882, end: 871, prophet: "", row: 0, isEvent: false },
-    { name: "אחאב", start: 871, end: 852, prophet: "אליהו", row: 0, isEvent: false },
-    { name: "אחזיהו", start: 852, end: 851, prophet: "אליהו", row: 0, isEvent: false },
-    { name: "יורם", start: 851, end: 842, prophet: "אלישע", row: 0, isEvent: false },
-    { name: "יהוא", start: 842, end: 814, prophet: "אלישע", row: 0, isEvent: false },
-    { name: "יהואחז", start: 814, end: 800, prophet: "", row: 0, isEvent: false },
-    { name: "יואש", start: 800, end: 784, prophet: "", row: 0, isEvent: false },
-    { name: "ירבעם השני", start: 784, end: 748, prophet: "יונה, עמוס", row: 0, isEvent: false },
-    { name: "זכריהו", start: 748, end: 747, prophet: "הושע", row: 0, isEvent: false },
-    { name: "שלום", start: 747, end: 747, prophet: "הושע", row: 0, isEvent: false },
-    { name: "מנחם", start: 747, end: 737, prophet: "הושע", row: 0, isEvent: false },
-    { name: "פקחיה", start: 737, end: 735, prophet: "הושע", row: 0, isEvent: false },
-    { name: "פקח", start: 735, end: 733, prophet: "הושע", row: 0, isEvent: false },
-    { name: "הושע בן אלה (נשבה)", start: 733, end: 724, prophet: "הושע", row: 0, isEvent: false },
-    { name: "חורבן שומרון", start: 722, end: 722, prophet: "", row: 0, isEvent: true },
+    { name: "ירבעם בן נבט", start: 928, end: 907, prophet: "", row: 0, isEvent: false, important: true },
+    { name: "נדב", start: 907, end: 906, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "בעשא", start: 906, end: 883, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "אלה", start: 883, end: 882, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "עמרי (ולפניו זמרי, תבני)", start: 882, end: 871, prophet: "", row: 0, isEvent: false, important: true },
+    { name: "אחאב", start: 871, end: 852, prophet: "אליהו", row: 0, isEvent: false, important: true },
+    { name: "אחזיהו", start: 852, end: 851, prophet: "אליהו", row: 0, isEvent: false, important: false },
+    { name: "יורם", start: 851, end: 842, prophet: "אלישע", row: 0, isEvent: false, important: false },
+    { name: "יהוא", start: 842, end: 814, prophet: "אלישע", row: 0, isEvent: false, important: true },
+    { name: "יהואחז", start: 814, end: 800, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "יואש", start: 800, end: 784, prophet: "", row: 0, isEvent: false, important: false },
+    { name: "ירבעם השני", start: 784, end: 748, prophet: "יונה, עמוס", row: 0, isEvent: false, important: true },
+    { name: "זכריהו", start: 748, end: 747, prophet: "הושע", row: 0, isEvent: false, important: false },
+    { name: "שלום", start: 747, end: 747, prophet: "הושע", row: 0, isEvent: false, important: false },
+    { name: "מנחם", start: 747, end: 737, prophet: "הושע", row: 0, isEvent: false, important: false },
+    { name: "פקחיה", start: 737, end: 735, prophet: "הושע", row: 0, isEvent: false, important: false },
+    { name: "פקח", start: 735, end: 733, prophet: "הושע", row: 0, isEvent: false, important: false },
+    { name: "הושע בן אלה (נשבה)", start: 733, end: 724, prophet: "הושע", row: 0, isEvent: false, important: false },
+    { name: "חורבן שומרון", start: 722, end: 722, prophet: "", row: 0, isEvent: true, important: false },
   ],
 };
+
 
 const app = document.getElementById("app");
 const scorebar = document.getElementById("scorebar");
@@ -2275,7 +2308,9 @@ function renderKingsTable() {
   legend.innerHTML =
     '<span><span class="dot" style="background:var(--judah)"></span>מלכי יהודה</span>' +
     '<span><span class="dot" style="background:var(--israel)"></span>מלכי ישראל</span>' +
-    '<span><span class="dot" style="background:var(--ink)"></span>אירוע (חורבן)</span>';
+    '<span><span class="dot" style="background:var(--ink)"></span>אירוע (חורבן)</span>' +
+    '<span><span class="dot" style="background:transparent;border-radius:50%;box-shadow:0 0 0 2px var(--gold) inset"></span>מלך מרכזי</span>' +
+    '<span><span class="prophet-dot-legend"></span>נביא בתקופתו</span>';
   app.appendChild(legend);
 
   const allEntries = KINGS_GANTT.judah.concat(KINGS_GANTT.israel);
@@ -2325,7 +2360,8 @@ function renderKingsTable() {
     const yearWord = yearCount === 1 ? "שנה אחת" : yearCount === 2 ? "שנתיים" : yearCount + " שנים";
     const years = k.start === k.end ? (k.start + ' לפנה"ס') : (k.start + '–' + k.end + ' לפנה"ס (' + yearWord + ')');
     detail.innerHTML =
-      '<div class="kd-name">' + k.name + ' <span style="font-size:13px;color:var(--sub);font-weight:400">— ' + kingdom + '</span></div>' +
+      '<div class="kd-name">' + k.name + ' <span style="font-size:13px;color:var(--sub);font-weight:400">— ' + kingdom + '</span>' +
+      (k.important ? ' <span class="kd-important">מלך מרכזי</span>' : '') + '</div>' +
       '<div class="kd-years">' + years + '</div>' +
       (k.prophet ? '<div class="kd-prophet">נביאים בני התקופה: ' + k.prophet + '</div>' : '');
     detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -2337,20 +2373,35 @@ function renderKingsTable() {
     kings.forEach((k) => {
       const bar = document.createElement("div");
       const isCoRegent = !!k.row;
-      bar.className = "kg-vbar" + (k.isEvent ? " event-marker" : "") + (isCoRegent ? " co-regent" : "");
+      const hasProphet = !!k.prophet;
+      bar.className = "kg-vbar" +
+        (k.isEvent ? " event-marker" : "") +
+        (isCoRegent ? " co-regent" : "") +
+        (k.important ? " important" : "");
       const trueHeight = (k.start - k.end) * SCALE_V;
       const height = Math.max(trueHeight, k.isEvent ? 8 : 4);
       bar.style.height = height + "px";
       bar.style.top = yTop(k.start) + "px";
       bar.style.zIndex = isCoRegent ? 10 : (height < 16 ? 4 : 1);
       if (!k.isEvent) bar.style.background = colorVar;
-      if (height < 18 && !k.isEvent) bar.classList.add("thin");
-      else {
+      if (height < 18 && !k.isEvent) {
+        bar.classList.add("thin");
+        if (hasProphet) bar.appendChild(document.createElement("i")).className = "prophet-dot";
+      } else {
         const nameSpan = document.createElement("span");
+        nameSpan.className = "kv-name";
         nameSpan.textContent = k.name;
         bar.appendChild(nameSpan);
+        if (hasProphet && height >= 32) {
+          const propSpan = document.createElement("span");
+          propSpan.className = "kv-prophet";
+          propSpan.textContent = k.prophet;
+          bar.appendChild(propSpan);
+        } else if (hasProphet) {
+          bar.appendChild(document.createElement("i")).className = "prophet-dot";
+        }
       }
-      bar.title = k.name + " (" + (k.start === k.end ? k.start : k.start + "–" + k.end) + " לפנה\"ס)" + (k.prophet ? " — נביא: " + k.prophet : "");
+      bar.title = k.name + " (" + (k.start === k.end ? k.start : k.start + "–" + k.end) + " לפנה\"ס)" + (k.prophet ? " — נביא: " + k.prophet : "") + (k.important ? " — מלך מרכזי" : "");
       bar.onclick = () => {
         body.querySelectorAll(".kg-vbar.active").forEach((b) => b.classList.remove("active"));
         bar.classList.add("active");
