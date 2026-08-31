@@ -482,7 +482,7 @@
   .kg-vcol {
     position: absolute;
     top: 0;
-    width: calc(50% - 34px);
+    width: calc(50% - 58px);
     height: 100%;
   }
   .kg-vcol-judah { right: 0; }
@@ -521,22 +521,36 @@
   .kg-vbar.important { outline: 2.5px solid var(--gold); outline-offset: 1.5px; }
   .kv-name { font-size: 11.5px; font-weight: 700; }
   .kv-prophet { font-size: 9.5px; font-weight: 500; opacity: 0.88; margin-top: 1px; }
-  .prophet-dot {
+  .kg-prophet-pill {
     position: absolute;
-    top: 4px; inset-inline-start: 4px;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 0 1.5px rgba(255,250,240,.9);
+    transform: translateY(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-soft);
+    border: 1px solid color-mix(in srgb, var(--gold) 38%, transparent);
+    border-radius: 999px;
+    padding: 2.5px 8px;
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    z-index: 6;
+    cursor: default;
   }
-  .prophet-dot-legend {
+  .kg-prophet-pill-judah { left: 50%; margin-left: 6px; }
+  .kg-prophet-pill-israel { right: 50%; margin-right: 6px; }
+  .kg-prophet-pill-legend {
     display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 0 1.5px var(--surface), 0 0 0 2.5px var(--gold);
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-soft);
+    border: 1px solid color-mix(in srgb, var(--gold) 38%, transparent);
+    border-radius: 999px;
+    padding: 2px 8px;
     margin-inline-end: 6px;
-    vertical-align: -1px;
+    vertical-align: 1px;
   }
   .kd-important {
     display: inline-block;
@@ -2310,7 +2324,7 @@ function renderKingsTable() {
     '<span><span class="dot" style="background:var(--israel)"></span>מלכי ישראל</span>' +
     '<span><span class="dot" style="background:var(--ink)"></span>אירוע (חורבן)</span>' +
     '<span><span class="dot" style="background:transparent;border-radius:50%;box-shadow:0 0 0 2px var(--gold) inset"></span>מלך מרכזי</span>' +
-    '<span><span class="prophet-dot-legend"></span>נביא בתקופתו</span>';
+    '<span><span class="kg-prophet-pill-legend">נביא</span>שם נביא ליד תקופתו</span>';
   app.appendChild(legend);
 
   const allEntries = KINGS_GANTT.judah.concat(KINGS_GANTT.israel);
@@ -2367,6 +2381,31 @@ function renderKingsTable() {
     detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
+  function computeProphetRuns(kings) {
+    const seq = kings.filter((k) => !k.row && !k.isEvent);
+    const runs = [];
+    let cur = null;
+    seq.forEach((k) => {
+      if (!k.prophet) { cur = null; return; }
+      if (cur && cur.text === k.prophet) {
+        cur.endYear = k.end;
+        cur.members.push(k);
+      } else {
+        cur = { text: k.prophet, startYear: k.start, endYear: k.end, members: [k] };
+        runs.push(cur);
+      }
+    });
+    runs.forEach((run) => {
+      const soleHeight = run.members.length === 1 ? (run.members[0].start - run.members[0].end) * SCALE_V : 0;
+      run.external = !(run.members.length === 1 && soleHeight >= 26);
+      if (run.external) run.members.forEach((m) => { m._extProphet = true; });
+    });
+    return runs;
+  }
+
+  const judahRuns = computeProphetRuns(KINGS_GANTT.judah);
+  const israelRuns = computeProphetRuns(KINGS_GANTT.israel);
+
   function buildCol(className, colorVar, kings, title) {
     const col = document.createElement("div");
     col.className = "kg-vcol " + className;
@@ -2386,19 +2425,16 @@ function renderKingsTable() {
       if (!k.isEvent) bar.style.background = colorVar;
       if (height < 18 && !k.isEvent) {
         bar.classList.add("thin");
-        if (hasProphet) bar.appendChild(document.createElement("i")).className = "prophet-dot";
       } else {
         const nameSpan = document.createElement("span");
         nameSpan.className = "kv-name";
         nameSpan.textContent = k.name;
         bar.appendChild(nameSpan);
-        if (hasProphet && height >= 32) {
+        if (hasProphet && height >= 26 && !k._extProphet) {
           const propSpan = document.createElement("span");
           propSpan.className = "kv-prophet";
           propSpan.textContent = k.prophet;
           bar.appendChild(propSpan);
-        } else if (hasProphet) {
-          bar.appendChild(document.createElement("i")).className = "prophet-dot";
         }
       }
       bar.title = k.name + " (" + (k.start === k.end ? k.start : k.start + "–" + k.end) + " לפנה\"ס)" + (k.prophet ? " — נביא: " + k.prophet : "") + (k.important ? " — מלך מרכזי" : "");
@@ -2412,11 +2448,26 @@ function renderKingsTable() {
     return col;
   }
 
+  function renderProphetPills(runs, side) {
+    runs.filter((r) => r.external).forEach((run) => {
+      const topPx = yTop(run.startYear);
+      const botPx = yTop(run.endYear);
+      const pill = document.createElement("div");
+      pill.className = "kg-prophet-pill kg-prophet-pill-" + side;
+      pill.style.top = Math.round((topPx + botPx) / 2) + "px";
+      pill.textContent = run.text;
+      pill.title = "נביא: " + run.text + " — " + run.members.map((m) => m.name).join(", ");
+      body.appendChild(pill);
+    });
+  }
+
   body.appendChild(buildCol("kg-vcol-judah", "var(--judah)", KINGS_GANTT.judah, "יהודה"));
   const axisCol = document.createElement("div");
   axisCol.className = "kg-vaxis";
   body.appendChild(axisCol);
   body.appendChild(buildCol("kg-vcol-israel", "var(--israel)", KINGS_GANTT.israel, "ישראל"));
+  renderProphetPills(judahRuns, "judah");
+  renderProphetPills(israelRuns, "israel");
 
   vwrap.appendChild(body);
   app.appendChild(vwrap);
