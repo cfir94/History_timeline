@@ -27,6 +27,10 @@
     --israel-soft: rgba(31,122,103,.13);
     --gold: #a8690f;
     --gold-soft: rgba(168,105,15,.14);
+    --ev-camp: #8c2f39;
+    --ev-siege: #2f2a24;
+    --ev-find: #a8690f;
+    --ev-fort: #4a6572;
     --good: #1f8a4c;
     --good-soft: rgba(31,138,76,.13);
     --bad: #c23b2e;
@@ -170,7 +174,7 @@
   }
   .home-hero p { color: var(--sub); font-size: 15.5px; max-width: 540px; margin: 0 auto; }
   .mode-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-  @media (min-width: 640px) { .mode-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (min-width: 640px) { .mode-grid { grid-template-columns: 1fr 1fr; } }
   .mode-card {
     position: relative;
     overflow: hidden;
@@ -439,10 +443,15 @@
   .kg-legend { display: flex; justify-content: center; gap: 22px; margin-bottom: 6px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
   .kg-legend .dot { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-inline-end: 6px; vertical-align: -1px; }
   .kg-source { text-align: center; font-size: 12.5px; color: var(--sub); margin: 8px 0 22px; }
-  .kg-vwrap { max-width: 620px; margin: 0 auto; }
+  .kg-vwrap {
+    --kg-axis-w: 116px;
+    --kg-ev-w: 150px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
   .kg-vheads {
     display: grid;
-    grid-template-columns: 1fr 60px 1fr;
+    grid-template-columns: 1fr var(--kg-axis-w) 1fr var(--kg-ev-w);
     align-items: center;
     margin-bottom: 10px;
   }
@@ -460,7 +469,11 @@
     color: var(--kc);
   }
   .kg-vhead .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--kc); }
-  .kg-vbody { position: relative; }
+  .kg-vbody {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr var(--kg-axis-w) 1fr var(--kg-ev-w);
+  }
   .kg-vgridline {
     position: absolute;
     left: 0; right: 0;
@@ -468,9 +481,8 @@
   }
   .kg-vtick {
     position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
+    left: 0; right: 0;
+    transform: translateY(-50%);
     text-align: center;
     font-size: 10.5px;
     color: var(--sub);
@@ -479,15 +491,7 @@
     background: var(--bg);
     z-index: 2;
   }
-  .kg-vcol {
-    position: absolute;
-    top: 0;
-    width: calc(50% - 58px);
-    height: 100%;
-  }
-  .kg-vcol-judah { right: 0; }
-  .kg-vcol-israel { left: 0; }
-  .kg-vaxis { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 100%; }
+  .kg-vcol, .kg-vaxis { position: relative; height: 100%; }
   .kg-vbar {
     position: absolute;
     right: 0; left: 0;
@@ -538,8 +542,8 @@
     z-index: 6;
     cursor: default;
   }
-  .kg-prophet-pill-judah { left: 50%; margin-left: 6px; }
-  .kg-prophet-pill-israel { right: 50%; margin-right: 6px; }
+  .kg-prophet-pill-judah { right: 3px; }
+  .kg-prophet-pill-israel { left: 3px; }
   .kg-prophet-pill-legend {
     display: inline-block;
     font-size: 9.5px;
@@ -552,6 +556,67 @@
     margin-inline-end: 6px;
     vertical-align: 1px;
   }
+  /* ---- עמודת אירועים וממצאים ---- */
+  .kg-vhead-ev { --kc: var(--sub); }
+  .kg-ev-rail {
+    position: absolute;
+    top: 0; bottom: 0;
+    inset-inline-start: 0;
+    width: 2px;
+    background: var(--line);
+    border-radius: 2px;
+  }
+  .kg-ev-dot {
+    position: absolute;
+    inset-inline-start: -3px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 2px var(--bg);
+    z-index: 3;
+  }
+  .kg-ev-label {
+    position: absolute;
+    inset-inline-start: 12px;
+    inset-inline-end: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 22px;
+    padding: 0 9px;
+    border: 1px solid var(--line);
+    border-inline-start: 3px solid var(--ec);
+    border-radius: 999px;
+    background: var(--surface);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: start;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+  }
+  .kg-ev-label:hover { box-shadow: var(--shadow); border-color: var(--ec); }
+  .kg-ev-label:active { transform: scale(0.97); }
+  .kg-ev-label.active { background: var(--card); border-color: var(--ec); box-shadow: var(--shadow); }
+  .kg-ev-label .ev-year { color: var(--ec); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+  .kg-ev-label .ev-title { overflow: hidden; text-overflow: ellipsis; }
+  .kd-kind {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ec);
+    background: color-mix(in srgb, var(--ec) 13%, transparent);
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin-inline-start: 6px;
+    vertical-align: middle;
+  }
+  .kd-rulers { color: var(--sub); font-weight: 600; }
+  .kd-desc { font-size: 13.5px; line-height: 1.6; margin-top: 10px; }
+  .kd-where { font-size: 12.5px; color: var(--sub); margin-top: 8px; font-weight: 600; }
   .kd-important {
     display: inline-block;
     font-size: 11px;
@@ -576,6 +641,79 @@
   .kg-detail .kd-name { font-size: 18px; font-weight: 800; }
   .kg-detail .kd-years { font-size: 13.5px; color: var(--sub); margin-top: 3px; font-variant-numeric: tabular-nums; }
   .kg-detail .kd-prophet { font-size: 13.5px; color: var(--gold); margin-top: 8px; font-weight: 600; }
+  @media (max-width: 760px) {
+    .kg-vwrap { --kg-axis-w: 76px; --kg-ev-w: 96px; }
+    .kg-vheads { font-size: 12px; }
+    .kg-vhead { font-size: 12px; padding: 5px 10px; gap: 5px; }
+    .kg-prophet-pill { max-width: 34px; font-size: 8.5px; padding: 2px 5px; }
+    .kg-ev-label { font-size: 9px; padding: 0 6px; gap: 4px; inset-inline-start: 9px; }
+    .kv-name { font-size: 10.5px; }
+    .kv-prophet { font-size: 9px; }
+  }
+
+  /* ===== Archaeology section ===== */
+  .arch-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 26px;
+  }
+  .arch-chip {
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 9px 17px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.14s;
+  }
+  .arch-chip:hover { border-color: var(--ec); }
+  .arch-chip:active { transform: scale(0.96); }
+  .arch-chip.on {
+    background: color-mix(in srgb, var(--ec) 14%, transparent);
+    border-color: var(--ec);
+    color: var(--ec);
+  }
+  .arch-list { display: flex; flex-direction: column; gap: 14px; }
+  .arch-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-inline-start: 4px solid var(--ec);
+    border-radius: var(--r-lg);
+    padding: 18px 22px;
+    box-shadow: var(--shadow);
+  }
+  .arch-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .arch-year {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ec);
+    font-variant-numeric: tabular-nums;
+  }
+  .arch-kind {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ec);
+    background: color-mix(in srgb, var(--ec) 12%, transparent);
+    border-radius: 999px;
+    padding: 3px 11px;
+  }
+  .arch-card h3 { margin: 0 0 5px; font-size: 17px; font-weight: 800; }
+  .arch-rulers { font-size: 12.5px; color: var(--sub); font-weight: 600; margin-bottom: 9px; }
+  .arch-desc { margin: 0; font-size: 14px; line-height: 1.65; }
+  .arch-where {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--sub);
+    font-weight: 600;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 9px;
+  }
+  .arch-count { text-align: center; font-size: 12.5px; color: var(--sub); margin-top: 6px; }
+
   .united-strip { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
   .united-item { background: var(--ink); color: var(--on-accent); border-radius: var(--r-md); padding: 12px 22px; text-align: center; min-width: 112px; }
   .united-item .u-name { font-size: 15px; font-weight: 700; }
@@ -1763,6 +1901,242 @@ const QUIZZES = {
     "exp": "הסכם בין האימפריה הבריטית לעות'מאנית."
    }
   ]
+ },
+ "archaeology_iron": {
+  "title": "ממצאים, מצורים וביצורים — תקופת המלכים",
+  "items": [
+   {
+    "type": "mc",
+    "topic": "ממצאים — מסעות",
+    "q": "מסע שישק (925 לפנה\"ס) מתועד ברשימת ערים כבושות שנחרתה במקדש:",
+    "options": [
+     "פרספוליס שבפרס",
+     "בבל שבמסופוטמיה",
+     "נינווה שבאשור",
+     "כרנך שבמצרים"
+    ],
+    "correct": 3,
+    "exp": "רשימה של כ-150 שמות מקומות, המקור החוץ-מקראי המרכזי למסע."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — מסעות",
+    "q": "השתתפותו של אחאב בקרב קרקר, עם 2,000 מרכבות, מתועדת בכתובת:",
+    "options": [
+     "מצבת תל דן הארמית",
+     "מנסרת סנחריב מנינווה",
+     "מצבת מישע מלך מואב",
+     "מונולית כורח של שלמנאסר ג'"
+    ],
+    "correct": 3,
+    "exp": "האזכור החוץ-מקראי הראשון של מלך ישראלי בשמו — \"אחאב הישראלי\"."
+   },
+   {
+    "type": "fill",
+    "topic": "ממצאים — תבליטים",
+    "q": "האובליסק השחור, שבו מתואר יהוא משתחווה לשלמנאסר ג', מתעד את גביית המס בשנת ___________________________ לפנה\"ס",
+    "answer": "841",
+    "exp": "התיאור המצויר היחיד שנשתמר של מלך מישראל."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — כתובות",
+    "q": "איזו מצבה מזכירה לראשונה מחוץ למקרא את שושלת \"בית דוד\"?",
+    "options": [
+     "מצבת תל דן הארמית",
+     "כתובת השילוח העברית",
+     "מנסרת סנחריב האשורית",
+     "מצבת מישע המואבית"
+    ],
+    "correct": 0,
+    "exp": "נמצאה ב-1993–94, מיוחסת לחזאל מלך ארם, מתוארכת לסביבות 840 לפנה\"ס."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — כתובות",
+    "q": "מצבת מישע מתארת את מרידתו של מלך מואב בשלטונו של:",
+    "options": [
+     "ממלכת מצרים",
+     "בית דוד מלכי יהודה",
+     "האימפריה האשורית",
+     "בית עמרי מלכי ישראל"
+    ],
+    "correct": 3,
+    "exp": "המצבה מזכירה גם את שם ה' — אחד האזכורים החוץ-מקראיים המוקדמים."
+   },
+   {
+    "type": "fill",
+    "topic": "ממצאים — חרסים",
+    "q": "אוסטרקוני שומרון, ובהם רישומי משלוחי שמן ויין לארמון, מתוארכים בעיקר לימי המלך ___________________________",
+    "answer": "ירבעם השני",
+    "exp": "102 חרסים מארמון שומרון, המאה ה-8 לפנה\"ס."
+   },
+   {
+    "type": "mc",
+    "topic": "מצורים",
+    "q": "כמה זמן נמשך המצור על שומרון עד נפילתה בידי האשורים?",
+    "options": [
+     "כשבועיים בלבד",
+     "כעשר שנים רצופות",
+     "כשלוש שנים",
+     "כחודש וחצי"
+    ],
+    "correct": 2,
+    "exp": "שלמנאסר ה' פתח במצור (724) וסרגון ב' השלים את הכיבוש (722)."
+   },
+   {
+    "type": "mc",
+    "topic": "ביצורים",
+    "q": "את החומה הרחבה בירושלים, שעובייה כ-7 מטרים, בנה המלך:",
+    "options": [
+     "יאשיהו",
+     "חזקיהו",
+     "צדקיהו",
+     "שלמה"
+    ],
+    "correct": 1,
+    "exp": "נחשפה ברובע היהודי בחפירות נחמן אביגד."
+   },
+   {
+    "type": "mc",
+    "topic": "ביצורים",
+    "q": "מה הייתה מטרתה העיקרית של החומה הרחבה?",
+    "options": [
+     "ביצור הגבעה המערבית שאליה התרחבה העיר",
+     "תיחום שטח הר הבית והמקדש",
+     "חלוקת העיר לרבעי מגורים נפרדים",
+     "הגנה על בריכת השילוח בלבד"
+    ],
+    "correct": 0,
+    "exp": "העיר גדלה בעקבות פליטי ממלכת ישראל שנפלה ב-722."
+   },
+   {
+    "type": "fill",
+    "topic": "ביצורים",
+    "q": "נקבת השילוח, שאורכה כ-533 מטרים, נחצבה לקראת מסע ___________________________ בשנת 701 לפנה\"ס",
+    "answer": "סנחריב",
+    "exp": "הזרמת מי הגיחון אל תוך העיר לקראת המצור."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — כתובות",
+    "q": "כתובת השילוח, המתארת את מפגש שני צוותי החוצבים, מוצגת היום ב:",
+    "options": [
+     "מוזיאון ארכיאולוגי באיסטנבול",
+     "המוזיאון הבריטי בלונדון",
+     "מוזיאון הלובר בפריז",
+     "מוזיאון ישראל בירושלים"
+    ],
+    "correct": 0,
+    "exp": "הועברה לאיסטנבול לאחר גילויה ב-1880, בימי השלטון העות'מאני."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — תבליטים",
+    "q": "תבליטי לכיש, המתעדים את מצור העיר וכיבושה, הוצבו במקורם ב:",
+    "options": [
+     "ארמון שומרון של אחאב",
+     "ארמון סנחריב בנינווה",
+     "שער העיר לכיש עצמה",
+     "מקדש כרנך במצרים"
+    ],
+    "correct": 1,
+    "exp": "היום במוזיאון הבריטי; המקור החזותי המפורט ביותר לקרב בארץ בתקופת המקרא."
+   },
+   {
+    "type": "fill",
+    "topic": "מצורים",
+    "q": "סוללת המצור האשורית בלכיש, מ-701 לפנה\"ס, היא סוללת המצור ה___________________________ ששרדה מהמזרח הקדום",
+    "answer": "יחידה",
+    "exp": "עדות פיזית נדירה לטכניקת המצור האשורית."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — כתובות",
+    "q": "כיצד מתארת מנסרת סנחריב את מצבו של חזקיהו בירושלים?",
+    "options": [
+     "ככלוא כציפור בכלוב בעיר מלכותו",
+     "כמי שנהרג במהלך המצור",
+     "כמי שנמלט אל ממלכת מצרים",
+     "כמי שנלקח בשבי אל נינווה"
+    ],
+    "correct": 0,
+    "exp": "הניסוח האשורי מודה בעקיפין שירושלים לא נכבשה."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — חרסים",
+    "q": "מדוע קמעות כתף הינום נחשבים לתגלית יוצאת דופן?",
+    "options": [
+     "הם התיאור המצויר היחיד של מלך ישראלי",
+     "הם הכתובת הארוכה ביותר שנמצאה בעברית",
+     "הם החותמות היחידים של מלך מיהודה",
+     "הם נושאים את הטקסט המקראי הקדום ביותר שנמצא"
+    ],
+    "correct": 3,
+    "exp": "שני גלילי כסף ובהם ברכת כהנים, מסוף המאה ה-7 לפנה\"ס."
+   },
+   {
+    "type": "fill",
+    "topic": "ממצאים — חרסים",
+    "q": "חרסי ערד הם ארכיון הפקודות של ___________________________ בן אשיהו, מפקד מצודת ערד",
+    "answer": "אלישיב",
+    "exp": "החרסים מזכירים גם את \"בית יהוה\"."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — חרסים",
+    "q": "מכתבי לכיש מדווחים שאנשי המשמר כבר אינם רואים את משואות:",
+    "options": [
+     "באר שבע",
+     "חברון",
+     "עזקה",
+     "גבעון"
+    ],
+    "correct": 2,
+    "exp": "עדות מהימים האחרונים לפני חורבן ירושלים (588–586 לפנה\"ס)."
+   },
+   {
+    "type": "mc",
+    "topic": "ממצאים — חרסים",
+    "q": "מה הייתה מטרתן של ידיות הכדים המוטבעות \"למלך\"?",
+    "options": [
+     "סימון מטבעות הכסף של הממלכה",
+     "סימון קברי מלכי בית דוד בירושלים",
+     "חתימת מכתבים דיפלומטיים לאשור",
+     "מערך אספקה ממלכתי לקראת מסע סנחריב"
+    ],
+    "correct": 3,
+    "exp": "כ-2,000 ידיות ובהן שם אחת מארבע ערים: חברון, זיף, שוכה וממשת."
+   },
+   {
+    "type": "fill",
+    "topic": "מצורים",
+    "q": "בקרב ___________________________ בשנת 605 לפנה\"ס ניצח נבוכדנאצר את מצרים, ויהודה עברה לשליטה בבלית",
+    "answer": "כרכמיש",
+    "exp": "נקודת המפנה מחסות מצרית לשליטה בבלית."
+   },
+   {
+    "type": "mc",
+    "topic": "ביצורים",
+    "q": "שערי שש התאים במגידו, בחצור ובגזר מיוחסים במסורת המחקר ל:",
+    "options": [
+     "הבבלים, לאחר חורבן הממלכה",
+     "חזקיהו, לקראת המרד באשור",
+     "שלמה, אך יש המתארכים לבית עמרי",
+     "ירבעם השני, בשיא ימי הפריחה"
+    ],
+    "correct": 2,
+    "exp": "מל\"א ט' ט\"ו מול הכרונולוגיה הנמוכה של פינקלשטיין."
+   },
+   {
+    "type": "fill",
+    "topic": "מצורים",
+    "q": "המצור הבבלי האחרון הסתיים בחורבן ירושלים ובית המקדש הראשון בשנת ___________________________ לפנה\"ס",
+    "answer": "586 (יש הגורסים 587)",
+    "exp": "מצור של כשנה וחצי בימי צדקיהו."
+   }
+  ]
  }
 };
 
@@ -1878,6 +2252,279 @@ const KINGS_GANTT = {
     { name: "הושע בן אלה (נשבה)", start: 733, end: 724, prophet: "הושע", row: 0, isEvent: false, important: false },
     { name: "חורבן שומרון", start: 722, end: 722, prophet: "", row: 0, isEvent: true, important: false },
   ],
+};
+
+const ARCHAEOLOGY = {
+ "kinds": {
+  "campaign": {
+   "label": "מסעות וקרבות",
+   "color": "var(--ev-camp)"
+  },
+  "siege": {
+   "label": "מצורים וחורבנות",
+   "color": "var(--ev-siege)"
+  },
+  "find": {
+   "label": "כתובות, חרסים ותבליטים",
+   "color": "var(--ev-find)"
+  },
+  "fort": {
+   "label": "ביצורים וחומות",
+   "color": "var(--ev-fort)"
+  }
+ },
+ "items": [
+  {
+   "year": 950,
+   "yearLabel": "המאה ה-10 לפנה\"ס",
+   "kind": "fort",
+   "chart": false,
+   "title": "שערי שש התאים במגידו, בחצור ובגזר",
+   "short": "שערי שלמה",
+   "desc": "שערים בני שישה תאים ומערכות ביצור דומות בשלוש הערים, המיוחסים במסורת המחקר לשלמה על פי מל\"א ט' ט\"ו. הכרונולוגיה הנמוכה מתארכת אותם לימי בית עמרי, במאה ה-9.",
+   "where": "מגידו, חצור וגזר — אתרי מורשת עולמית"
+  },
+  {
+   "year": 925,
+   "yearLabel": "925 לפנה\"ס",
+   "kind": "campaign",
+   "chart": true,
+   "title": "מסע שישק (שושנק הראשון) לארץ ישראל",
+   "short": "מסע שישק",
+   "desc": "פרעה שושנק הראשון עולה על הארץ כחמש שנים אחרי פילוג הממלכה. רחבעם פודה את ירושלים באוצרות בית המקדש (מל\"א י\"ד). רשימת הערים הכבושות, כ-150 שמות מקומות, נחרתה על קיר מקדש אמון בכרנך.",
+   "where": "תבליט בכרנך, מצרים"
+  },
+  {
+   "year": 880,
+   "yearLabel": "סביבות 880 לפנה\"ס",
+   "kind": "fort",
+   "chart": true,
+   "title": "עמרי מייסד את שומרון כבירת ישראל",
+   "short": "ייסוד שומרון",
+   "desc": "עמרי קונה את ההר משמר ובונה עליו עיר חדשה (מל\"א ט\"ז). אחאב בנו מרחיב אותה בארמון אבן גזית ובקישוטי שנהב — \"בית השן\" שהתגלה בחפירות.",
+   "where": "תל שומרון (סבסטיה)"
+  },
+  {
+   "year": 853,
+   "yearLabel": "853 לפנה\"ס",
+   "kind": "campaign",
+   "chart": true,
+   "title": "קרב קרקר וכתובת מונולית כורח",
+   "short": "קרב קרקר",
+   "desc": "אחאב מצטרף לקואליציה ארמית־ישראלית נגד שלמנאסר ג' ותורם לה 2,000 מרכבות ו-10,000 חיילים — התרומה הגדולה בקואליציה. הכתובת האשורית מזכירה את \"אחאב הישראלי\", האזכור החוץ-מקראי הראשון של מלך ישראלי בשמו.",
+   "where": "המוזיאון הבריטי, לונדון"
+  },
+  {
+   "year": 850,
+   "yearLabel": "המאה ה-9 לפנה\"ס",
+   "kind": "fort",
+   "chart": false,
+   "title": "מערכות המים בחצור ובמגידו",
+   "short": "מערכות מים",
+   "desc": "פירים ומנהרות חצובים בסלע שהובילו אל מקור מים מחוץ לעיר, כדי להבטיח אספקת מים בעת מצור. מיוחסים לימי בית עמרי, והם מן ההישגים ההנדסיים הבולטים של תקופת הברזל.",
+   "where": "תל חצור ותל מגידו"
+  },
+  {
+   "year": 841,
+   "yearLabel": "841 לפנה\"ס",
+   "kind": "find",
+   "chart": true,
+   "title": "האובליסק השחור — יהוא משתחווה לשלמנאסר ג'",
+   "short": "האובליסק השחור",
+   "desc": "מצבת בזלת מנמרוד ובה תבליט של \"יהוא בן עמרי\" משתחווה ומעלה מס למלך אשור. זהו התיאור המצויר היחיד שנשתמר של מלך מישראל.",
+   "where": "המוזיאון הבריטי, לונדון"
+  },
+  {
+   "year": 840,
+   "yearLabel": "סביבות 840 לפנה\"ס",
+   "kind": "find",
+   "chart": true,
+   "title": "מצבת מישע ומצבת תל דן",
+   "short": "מישע ותל דן",
+   "desc": "מצבת מישע מלך מואב מתארת את מרידתו בבית עמרי ומזכירה את שם ה'. מצבת תל דן, כתובת ארמית המיוחסת לחזאל מלך ארם, מזכירה את \"בית דוד\" — העדות החוץ-מקראית הראשונה לשושלת דוד.",
+   "where": "מצבת מישע — הלובר, פריז; מצבת תל דן — מוזיאון ישראל"
+  },
+  {
+   "year": 800,
+   "yearLabel": "המאות ה-9–7 לפנה\"ס",
+   "kind": "fort",
+   "chart": false,
+   "title": "מצודות הנגב ומצודת ערד",
+   "short": "מצודות הנגב",
+   "desc": "רשת מצודות ששמרה על גבולה הדרומי של יהודה ועל דרכי המסחר. במצודת ערד התגלה מקדש ישראלי ייחודי ובו קודש הקודשים ומזבחות קטורת, שיצא ככל הנראה מכלל שימוש באחת מרפורמות הפולחן.",
+   "where": "תל ערד ומצודות הנגב"
+  },
+  {
+   "year": 770,
+   "yearLabel": "המאה ה-8 לפנה\"ס",
+   "kind": "find",
+   "chart": true,
+   "title": "אוסטרקוני שומרון (חרסי שומרון)",
+   "short": "חרסי שומרון",
+   "desc": "102 חרסים כתובים מארמון שומרון, בעיקר מימי ירבעם השני. הם מתעדים משלוחי שמן ויין לארמון ומשמרים שמות פרטיים ושמות מחוזות — מקור ראשון במעלה למנהל הממלכתי בישראל.",
+   "where": "מוזיאון ישראל, ירושלים"
+  },
+  {
+   "year": 732,
+   "yearLabel": "732 לפנה\"ס",
+   "kind": "campaign",
+   "chart": true,
+   "title": "מסע תגלת פלאסר ג' והגלות הראשונה",
+   "short": "תגלת פלאסר",
+   "desc": "אשור כובשת את הגליל ואת הגלעד, הופכת את דמשק לפרובינציה ומגלה חלק מתושבי ישראל (מל\"ב ט\"ו כ\"ט). ממלכת ישראל מצטמצמת לאזור שומרון בלבד, בימי פקח בישראל ואחז ביהודה.",
+   "where": "כתובות תגלת פלאסר ג', נמרוד"
+  },
+  {
+   "year": 722,
+   "yearLabel": "724–722 לפנה\"ס",
+   "kind": "siege",
+   "chart": true,
+   "title": "מצור שומרון ונפילת ממלכת ישראל",
+   "short": "נפילת שומרון",
+   "desc": "שלמנאסר ה' פותח במצור על שומרון שנמשך כשלוש שנים, וסרגון ב' משלים את הכיבוש ומתפאר בהגליית 27,290 מתושביה. זהו סופה של ממלכת ישראל וראשית סיפור עשרת השבטים.",
+   "where": "תל שומרון; כתובות סרגון ב' בח'ורסבאד"
+  },
+  {
+   "year": 705,
+   "yearLabel": "705–701 לפנה\"ס",
+   "kind": "fort",
+   "chart": true,
+   "title": "ביצורי חזקיהו: החומה הרחבה ונקבת השילוח",
+   "short": "ביצורי חזקיהו",
+   "desc": "לקראת המרד באשור מבצר חזקיהו את ירושלים: החומה הרחבה, שעובייה כ-7 מטרים, מקיפה את הגבעה המערבית שאליה התרחבה העיר בעקבות פליטי הצפון. במקביל נחצבת נקבת השילוח באורך כ-533 מטרים, שמעבירה את מי הגיחון אל תוך העיר. ישעיהו כ\"ב י': \"ותתצו הבתים לבצר החומה\".",
+   "where": "החומה הרחבה — הרובע היהודי; הנקבה — עיר דוד"
+  },
+  {
+   "year": 704,
+   "yearLabel": "705–701 לפנה\"ס",
+   "kind": "find",
+   "chart": false,
+   "title": "חותמות \"למלך\"",
+   "short": "חותמות למלך",
+   "desc": "כ-2,000 ידיות כדי אגירה מוטבעות בחותם \"למלך\" ובשם אחת מארבע ערים — חברון, זיף, שוכה וממשת. עדות למערך אספקה ממלכתי מרוכז שהוקם לקראת מסע סנחריב.",
+   "where": "אתרי יהודה; אוספי מוזיאון ישראל"
+  },
+  {
+   "year": 701,
+   "yearLabel": "701 לפנה\"ס",
+   "kind": "siege",
+   "chart": true,
+   "title": "מסע סנחריב: מצור לכיש ומצור ירושלים",
+   "short": "מסע סנחריב",
+   "desc": "סנחריב כובש 46 ערים מבוצרות ביהודה. לכיש, העיר השנייה בחשיבותה, נכבשת בסוללת מצור אדירה — סוללת המצור היחידה ששרדה מן המזרח הקדום. ירושלים נצורה אך אינה נופלת, וחזקיהו משלם מס כבד.",
+   "where": "תל לכיש — הסוללה האשורית"
+  },
+  {
+   "year": 700,
+   "yearLabel": "701 לפנה\"ס",
+   "kind": "find",
+   "chart": false,
+   "title": "תבליטי לכיש",
+   "short": "תבליטי לכיש",
+   "desc": "סדרת תבליטי אבן שעיטרה את אולם הכס בארמון סנחריב בנינווה ומתעדת את מצור לכיש וכיבושה — הסוללה, אילי הניגוח, הגולים והשלל. זהו המקור החזותי המפורט ביותר לקרב שהתרחש בארץ ישראל בתקופת המקרא.",
+   "where": "המוזיאון הבריטי, לונדון"
+  },
+  {
+   "year": 699,
+   "yearLabel": "701 לפנה\"ס",
+   "kind": "find",
+   "chart": false,
+   "title": "כתובת השילוח",
+   "short": "כתובת השילוח",
+   "desc": "כתובת בעברית עתיקה שנחרתה בדופן הנקבה ומתארת את הרגע שבו נפגשו שני צוותי החוצבים שחצבו זה לקראת זה. התגלתה ב-1880 בידי נערים ששיחקו בנקבה.",
+   "where": "המוזיאון הארכיאולוגי, איסטנבול"
+  },
+  {
+   "year": 691,
+   "yearLabel": "סביבות 691 לפנה\"ס",
+   "kind": "find",
+   "chart": true,
+   "title": "מנסרת סנחריב (פריזמת טיילור)",
+   "short": "מנסרת סנחריב",
+   "desc": "כרוניקה אשורית המתארת את המסע ליהודה: \"ואת חזקיהו היהודי... כלאתי כציפור בכלוב בירושלים עיר מלכותו\". הניסוח מודה בעקיפין שירושלים לא נכבשה.",
+   "where": "המוזיאון הבריטי, לונדון"
+  },
+  {
+   "year": 620,
+   "yearLabel": "סוף המאה ה-7 לפנה\"ס",
+   "kind": "find",
+   "chart": true,
+   "title": "קמעות כתף הינום",
+   "short": "כתף הינום",
+   "desc": "שני גלילי כסף זעירים שנמצאו במערת קבורה, ובהם חרוטה ברכת הכהנים. זהו הטקסט המקראי הקדום ביותר שנמצא — מאות שנים לפני מגילות ים המלח.",
+   "where": "מוזיאון ישראל, ירושלים"
+  },
+  {
+   "year": 610,
+   "yearLabel": "סוף המאה ה-7 לפנה\"ס",
+   "kind": "find",
+   "chart": false,
+   "title": "בולות מעיר דוד",
+   "short": "בולות עיר דוד",
+   "desc": "חותמות טין שנשרפו ונשתמרו בחורבן, ובהן שמות פקידי הממלכה — בהם \"גמריהו בן שפן\", המוזכר בירמיהו ל\"ו כמי שבלשכתו נקראה מגילת ירמיהו. קישור ישיר בין הממצא לטקסט המקראי.",
+   "where": "עיר דוד, ירושלים"
+  },
+  {
+   "year": 609,
+   "yearLabel": "609 לפנה\"ס",
+   "kind": "campaign",
+   "chart": true,
+   "title": "קרב מגידו: מות יאשיהו",
+   "short": "קרב מגידו",
+   "desc": "יאשיהו יוצא לעצור את פרעה נכה בדרכו לסייע לאשור הגוססת, ונהרג במגידו. מותו מסיים את הרפורמה הדתית ואת תקופת העצמאות היחסית של יהודה.",
+   "where": "תל מגידו"
+  },
+  {
+   "year": 605,
+   "yearLabel": "605 לפנה\"ס",
+   "kind": "campaign",
+   "chart": true,
+   "title": "קרב כרכמיש",
+   "short": "קרב כרכמיש",
+   "desc": "נבוכדנאצר מנצח את הצבא המצרי בכרכמיש שעל הפרת. יהודה עוברת מחסות מצרית לשליטה בבלית — המהלך שיוביל בתוך פחות מעשרים שנה לחורבן.",
+   "where": "כרכמיש, על גבול תורכיה–סוריה"
+  },
+  {
+   "year": 597,
+   "yearLabel": "597 לפנה\"ס",
+   "kind": "siege",
+   "chart": true,
+   "title": "המצור הראשון על ירושלים וגלות יהויכין",
+   "short": "גלות יהויכין",
+   "desc": "נבוכדנאצר כובש את ירושלים, מגלה את יהויכין ואת האליטה — \"גלות החרש והמסגר\" — וממליך תחתיו את צדקיהו. יחזקאל ודניאל נמנים עם גולי גלות זו.",
+   "where": "כרוניקות בבל, המוזיאון הבריטי"
+  },
+  {
+   "year": 592,
+   "yearLabel": "סוף המאה ה-7 – 586 לפנה\"ס",
+   "kind": "find",
+   "chart": false,
+   "title": "חרסי ערד",
+   "short": "חרסי ערד",
+   "desc": "ארכיון של כמאה חרסים ובהם פקודות אספקה שנשלחו לאלישיב בן אשיהו, מפקד מצודת ערד. אחד החרסים מזכיר את \"בית יהוה\" — אזכור נדיר של המקדש בכתובת מן התקופה.",
+   "where": "תל ערד; מוזיאון ישראל"
+  },
+  {
+   "year": 589,
+   "yearLabel": "588–586 לפנה\"ס",
+   "kind": "find",
+   "chart": false,
+   "title": "מכתבי לכיש",
+   "short": "מכתבי לכיש",
+   "desc": "21 חרסים שנמצאו בשער העיר לכיש, מכתבים ששלח קצין בשם הושעיהו. החרס המפורסם מדווח: \"כי אל משאת לכש נחנו שמרים... כי לא נראה את עזקה\" — עדות מן הימים האחרונים לפני החורבן, כשהערים נופלות אחת אחרי השנייה.",
+   "where": "המוזיאון הבריטי ומוזיאון ישראל"
+  },
+  {
+   "year": 586,
+   "yearLabel": "588–586 לפנה\"ס",
+   "kind": "siege",
+   "chart": true,
+   "title": "המצור האחרון וחורבן ירושלים ובית ראשון",
+   "short": "חורבן ירושלים",
+   "desc": "מצור בבלי שנמשך כשנה וחצי מסתיים בהבקעת החומה ובשריפת המקדש והעיר. צדקיהו נתפס, וגלות בבל יוצאת לדרך. חלק מן החוקרים מתארכים את החורבן ל-587 לפנה\"ס.",
+   "where": "עיר דוד — שכבת החורבן ובית האחיאל"
+  }
+ ]
 };
 
 
@@ -2291,6 +2938,26 @@ function drawTimeline() {
 
 /* ============================= Kings Gantt chart ============================= */
 
+// מי מלך בשנה נתונה (לפנה"ס), לפי טבלת המלכים — משמש לתיאור אירועים וממצאים
+function kingAtYear(kings, year) {
+  return kings.filter((k) => !k.isEvent && !k.row && k.end < year && year <= k.start)[0] || null;
+}
+
+function rulersText(year) {
+  const j = kingAtYear(KINGS_GANTT.judah, year);
+  const i = kingAtYear(KINGS_GANTT.israel, year);
+  const parts = [];
+  if (j) parts.push("ביהודה: " + j.name);
+  if (i) parts.push("בישראל: " + i.name);
+  else if (year < 722 && year >= 586) parts.push("בישראל: לאחר נפילת שומרון");
+  return parts.join(" · ");
+}
+
+function rulersLine(year) {
+  const t = rulersText(year);
+  return t ? ' <span class="kd-rulers">· ' + t + "</span>" : "";
+}
+
 function renderKingsTable() {
   mode = "kings";
   updateScorebar();
@@ -2322,10 +2989,17 @@ function renderKingsTable() {
   legend.innerHTML =
     '<span><span class="dot" style="background:var(--judah)"></span>מלכי יהודה</span>' +
     '<span><span class="dot" style="background:var(--israel)"></span>מלכי ישראל</span>' +
-    '<span><span class="dot" style="background:var(--ink)"></span>אירוע (חורבן)</span>' +
     '<span><span class="dot" style="background:transparent;border-radius:50%;box-shadow:0 0 0 2px var(--gold) inset"></span>מלך מרכזי</span>' +
-    '<span><span class="kg-prophet-pill-legend">נביא</span>שם נביא ליד תקופתו</span>';
+    '<span><span class="kg-prophet-pill-legend">נביא</span>נביא בן התקופה</span>';
   app.appendChild(legend);
+
+  const evLegend = document.createElement("div");
+  evLegend.className = "kg-legend kg-legend-ev";
+  evLegend.innerHTML = Object.keys(ARCHAEOLOGY.kinds).map((key) => {
+    const k = ARCHAEOLOGY.kinds[key];
+    return '<span><span class="dot" style="background:' + k.color + '"></span>' + k.label + '</span>';
+  }).join("");
+  app.appendChild(evLegend);
 
   const allEntries = KINGS_GANTT.judah.concat(KINGS_GANTT.israel);
   const AXIS_START = Math.max(...allEntries.map((k) => k.start));
@@ -2344,7 +3018,8 @@ function renderKingsTable() {
   heads.innerHTML =
     '<div class="kg-vhead" style="--kc:var(--judah)"><span class="dot"></span>יהודה</div>' +
     '<div></div>' +
-    '<div class="kg-vhead" style="--kc:var(--israel)"><span class="dot"></span>ישראל</div>';
+    '<div class="kg-vhead" style="--kc:var(--israel)"><span class="dot"></span>ישראל</div>' +
+    '<div class="kg-vhead kg-vhead-ev">אירועים וממצאים</div>';
   vwrap.appendChild(heads);
 
   const body = document.createElement("div");
@@ -2358,11 +3033,6 @@ function renderKingsTable() {
     line.className = "kg-vgridline";
     line.style.top = yTop(y) + "px";
     body.appendChild(line);
-    const tick = document.createElement("div");
-    tick.className = "kg-vtick";
-    tick.style.top = yTop(y) + "px";
-    tick.textContent = y;
-    body.appendChild(tick);
   }
 
   const detail = document.createElement("div");
@@ -2439,7 +3109,7 @@ function renderKingsTable() {
       }
       bar.title = k.name + " (" + (k.start === k.end ? k.start : k.start + "–" + k.end) + " לפנה\"ס)" + (k.prophet ? " — נביא: " + k.prophet : "") + (k.important ? " — מלך מרכזי" : "");
       bar.onclick = () => {
-        body.querySelectorAll(".kg-vbar.active").forEach((b) => b.classList.remove("active"));
+        body.querySelectorAll(".kg-vbar.active, .kg-ev-label.active").forEach((b) => b.classList.remove("active"));
         bar.classList.add("active");
         showKingDetail(k, title);
       };
@@ -2448,7 +3118,7 @@ function renderKingsTable() {
     return col;
   }
 
-  function renderProphetPills(runs, side) {
+  function renderProphetPills(runs, side, host) {
     runs.filter((r) => r.external).forEach((run) => {
       const topPx = yTop(run.startYear);
       const botPx = yTop(run.endYear);
@@ -2457,17 +3127,84 @@ function renderKingsTable() {
       pill.style.top = Math.round((topPx + botPx) / 2) + "px";
       pill.textContent = run.text;
       pill.title = "נביא: " + run.text + " — " + run.members.map((m) => m.name).join(", ");
-      body.appendChild(pill);
+      host.appendChild(pill);
     });
   }
 
-  body.appendChild(buildCol("kg-vcol-judah", "var(--judah)", KINGS_GANTT.judah, "יהודה"));
+  function showEventDetail(ev) {
+    detail.classList.add("show");
+    const kind = ARCHAEOLOGY.kinds[ev.kind];
+    detail.innerHTML =
+      '<div class="kd-name">' + ev.title +
+      ' <span class="kd-kind" style="--ec:' + kind.color + '">' + kind.label + '</span></div>' +
+      '<div class="kd-years">' + ev.yearLabel + rulersLine(ev.year) + '</div>' +
+      '<div class="kd-desc">' + ev.desc + '</div>' +
+      (ev.where ? '<div class="kd-where">היכן היום: ' + ev.where + '</div>' : '');
+    detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // עמודת האירועים: סימון על מסילה במיקום השנה המדויק, ותווית שנדחקת מטה כדי לא לחפוף לקודמתה
+  function buildEventsCol() {
+    const col = document.createElement("div");
+    col.className = "kg-vcol kg-vcol-events";
+    const rail = document.createElement("div");
+    rail.className = "kg-ev-rail";
+    col.appendChild(rail);
+
+    const LABEL_H = 22;
+    const GAP = 4;
+    let prevBottom = -Infinity;
+
+    ARCHAEOLOGY.items.filter((it) => it.chart && it.year <= AXIS_START && it.year >= AXIS_END).forEach((ev) => {
+      const y = yTop(ev.year);
+      const kind = ARCHAEOLOGY.kinds[ev.kind];
+
+      const dot = document.createElement("div");
+      dot.className = "kg-ev-dot";
+      dot.style.top = y + "px";
+      dot.style.background = kind.color;
+      col.appendChild(dot);
+
+      const label = document.createElement("button");
+      label.type = "button";
+      label.className = "kg-ev-label";
+      label.style.setProperty("--ec", kind.color);
+      let top = y - LABEL_H / 2;
+      if (top < prevBottom + GAP) top = prevBottom + GAP;
+      prevBottom = top + LABEL_H;
+      label.style.top = top + "px";
+      label.innerHTML =
+        '<span class="ev-year">' + ev.year + '</span>' +
+        '<span class="ev-title">' + ev.short + '</span>';
+      label.title = ev.yearLabel + " — " + ev.title;
+      label.onclick = () => {
+        body.querySelectorAll(".kg-vbar.active, .kg-ev-label.active").forEach((b) => b.classList.remove("active"));
+        label.classList.add("active");
+        showEventDetail(ev);
+      };
+      col.appendChild(label);
+    });
+    return col;
+  }
+
   const axisCol = document.createElement("div");
   axisCol.className = "kg-vaxis";
+  for (let y = Math.floor(AXIS_START / tickStep) * tickStep; y >= AXIS_END; y -= tickStep) {
+    if (y > AXIS_START) continue;
+    const tick = document.createElement("div");
+    tick.className = "kg-vtick";
+    tick.style.top = yTop(y) + "px";
+    tick.textContent = y;
+    axisCol.appendChild(tick);
+  }
+  renderProphetPills(judahRuns, "judah", axisCol);
+  renderProphetPills(israelRuns, "israel", axisCol);
+
+  // סדר ה-DOM ב-RTL: הפריט הראשון הוא הימני ביותר
+  body.appendChild(buildCol("kg-vcol-judah", "var(--judah)", KINGS_GANTT.judah, "יהודה"));
   body.appendChild(axisCol);
   body.appendChild(buildCol("kg-vcol-israel", "var(--israel)", KINGS_GANTT.israel, "ישראל"));
-  renderProphetPills(judahRuns, "judah");
-  renderProphetPills(israelRuns, "israel");
+  body.appendChild(buildEventsCol());
 
   vwrap.appendChild(body);
   app.appendChild(vwrap);
@@ -2477,6 +3214,91 @@ function renderKingsTable() {
   src.className = "kg-source";
   src.textContent = KINGS_GANTT.source;
   app.appendChild(src);
+
+  const back = document.createElement("div");
+  back.className = "backlink";
+  back.textContent = "⟵ חזרה למסך הראשי";
+  back.onclick = renderHome;
+  const centerWrap = document.createElement("div");
+  centerWrap.style.textAlign = "center";
+  centerWrap.appendChild(back);
+  app.appendChild(centerWrap);
+  window.scrollTo(0, 0);
+}
+
+/* ============================= Archaeology section ============================= */
+
+let archFilter = "all";
+
+function renderArchSection() {
+  mode = "arch";
+  updateScorebar();
+  app.innerHTML = "";
+
+  const h = document.createElement("div");
+  h.className = "section-title";
+  h.style.textAlign = "center";
+  h.textContent = "ממצאים, מצורים וביצורים";
+  app.appendChild(h);
+  const sub = document.createElement("div");
+  sub.className = "section-sub";
+  sub.style.textAlign = "center";
+  sub.textContent = "תקופת המלכים, 928–586 לפנה\"ס — מסודר מהמוקדם למאוחר, עם ציון מי מלך באותה שנה";
+  app.appendChild(sub);
+
+  const chips = document.createElement("div");
+  chips.className = "arch-chips";
+  const list = document.createElement("div");
+  list.className = "arch-list";
+
+  const options = [["all", "הכול", "var(--sub)"]].concat(
+    Object.keys(ARCHAEOLOGY.kinds).map((key) => [key, ARCHAEOLOGY.kinds[key].label, ARCHAEOLOGY.kinds[key].color])
+  );
+
+  function drawList() {
+    list.innerHTML = "";
+    const items = ARCHAEOLOGY.items.filter((it) => archFilter === "all" || it.kind === archFilter);
+    items.forEach((it) => {
+      const kind = ARCHAEOLOGY.kinds[it.kind];
+      const card = document.createElement("div");
+      card.className = "arch-card";
+      card.style.setProperty("--ec", kind.color);
+      const rulers = rulersText(it.year);
+      card.innerHTML =
+        '<div class="arch-head">' +
+          '<span class="arch-year">' + it.yearLabel + '</span>' +
+          '<span class="arch-kind">' + kind.label + '</span>' +
+        '</div>' +
+        '<h3>' + it.title + '</h3>' +
+        (rulers ? '<div class="arch-rulers">' + rulers + '</div>' : '') +
+        '<p class="arch-desc">' + it.desc + '</p>' +
+        (it.where ? '<div class="arch-where">היכן היום: ' + it.where + '</div>' : '');
+      list.appendChild(card);
+    });
+    const count = document.createElement("div");
+    count.className = "arch-count";
+    count.textContent = items.length + " פריטים";
+    list.appendChild(count);
+  }
+
+  options.forEach(([key, label, color]) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "arch-chip" + (archFilter === key ? " on" : "");
+    chip.style.setProperty("--ec", color);
+    chip.textContent = label;
+    chip.onclick = () => {
+      archFilter = key;
+      chips.querySelectorAll(".arch-chip").forEach((c) => c.classList.remove("on"));
+      chip.classList.add("on");
+      drawList();
+    };
+    chips.appendChild(chip);
+  });
+
+  app.appendChild(chips);
+  drawList();
+  app.appendChild(list);
 
   const back = document.createElement("div");
   back.className = "backlink";
@@ -2501,7 +3323,7 @@ function renderHome() {
   intro.className = "home-hero";
   const stripColors = ["var(--line)", "var(--line)", "var(--judah-soft)", "var(--judah)", "var(--judah)", "var(--gold)", "var(--gold)", "var(--israel-soft)", "var(--israel)", "var(--israel)", "var(--ink)", "var(--gold)", "var(--judah)", "var(--israel)", "var(--gold)", "var(--ink)"];
   let stripHtml = '<div class="hero-strip">' + stripColors.map((c) => '<span style="background:' + c + '"></span>').join("") + '</div>';
-  intro.innerHTML = stripHtml + "<h2>מה קדם למה?</h2><p>שלושה כלי תרגול שמתמקדים אך ורק בציר הזמן ההיסטורי — תיארוך תקופות ואירועים, סדר כרונולוגי, ותקופות מקבילות.</p>";
+  intro.innerHTML = stripHtml + "<h2>מה קדם למה?</h2><p>ארבעה כלי תרגול שמתמקדים אך ורק בציר הזמן ההיסטורי — תיארוך תקופות ואירועים, סדר כרונולוגי, תקופות מקבילות, והממצאים שמתארכים אותן.</p>";
   wrap.appendChild(intro);
 
   const grid = document.createElement("div");
@@ -2511,11 +3333,13 @@ function renderHome() {
     calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg>',
     compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><polygon points="15.5 8.5 13.3 13.3 8.5 15.5 10.7 10.7 15.5 8.5"/></svg>',
     crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 18h17M4.5 18 3 8.2l5.2 3.8L12 5.5l3.8 6.5L21 8.2 19.5 18"/></svg>',
+    stele: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V6.5a5 5 0 0 1 10 0V21"/><path d="M4.5 21h15"/><path d="M10 10h4M10 13.5h4M10 17h2"/></svg>',
   };
   const cards = [
     { icon: ICONS.calendar, accent: "var(--gold)", title: "שאלוני תיארוך", desc: "מתי הייתה כל תקופה, מה קרה קודם, ואיזו תקופה מקבילה לאיזו — לפי נושא.", fn: renderQuizSelect },
     { icon: ICONS.compass, accent: "var(--israel)", title: "ציר זמן גרירה", desc: "הציבו תקופות, אירועים ודמויות במקומם הכרונולוגי הנכון על ציר הזמן.", fn: renderTimelineSelect },
-    { icon: ICONS.crown, accent: "var(--judah)", title: "מלכי ישראל ויהודה", desc: "גרף זמן מלא: כל המלכים על ציר משותף, לפי שנות מלכותם והנביאים בני זמנם.", fn: renderKingsTable },
+    { icon: ICONS.crown, accent: "var(--judah)", title: "מלכי ישראל ויהודה", desc: "גרף זמן מלא: כל המלכים על ציר משותף, לפי שנות מלכותם, הנביאים בני זמנם והאירועים שבתקופתם.", fn: renderKingsTable },
+    { icon: ICONS.stele, accent: "var(--ev-camp)", title: "ממצאים, מצורים וביצורים", desc: "מסעות וקרבות, כתובות וחרסים, תבליטים וחומות — מה נמצא, מתי, ובימי איזה מלך.", fn: renderArchSection },
   ];
   cards.forEach((c) => {
     const card = document.createElement("div");
