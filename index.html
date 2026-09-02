@@ -461,6 +461,44 @@
   @media (prefers-reduced-motion: reduce) { .tl-slot.empty.can-drop { animation: none; } }
   .tl-slot.filled { border-style: solid; border-color: var(--line-soft); padding: 0; background: transparent; }
 
+
+  /* ---- גרירה בציר הזמן ---- */
+  /* touch-action: none נדרש כדי שמגע על כרטיס יגרור ולא יגלול את הדף.
+     הגלילה נשמרת דרך כל השטח שמסביב — הרווחים, הכותרות ומסגרת המשבצות. */
+  .tl-card { touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
+  .tl-card:active { cursor: grabbing; }
+  body.tl-drag-on { cursor: grabbing; -webkit-user-select: none; user-select: none; }
+  body.tl-drag-on .tl-card { cursor: grabbing; }
+
+  .tl-card.tl-dragging { opacity: 0.3; }
+  .tl-card.tl-ghost {
+    position: fixed;
+    left: 0; top: 0; margin: 0;
+    transition: none;
+    pointer-events: none;
+    z-index: 900;
+    box-shadow: var(--shadow-lift);
+    transform-origin: 50% 50%;
+    rotate: -1.5deg;
+    opacity: 0.97;
+  }
+
+  /* יעד הנחיתה — חזק יותר מ-can-drop, ועובד גם על משבצת תפוסה */
+  .tl-slot.drop-over {
+    border-color: var(--gold) !important;
+    border-style: solid !important;
+    background: var(--gold-soft) !important;
+    box-shadow: 0 0 0 3px var(--gold-soft);
+    animation: none !important;
+  }
+  .tl-slot.drop-over .tl-slot-ph { color: var(--gold); font-weight: 800; opacity: 1; }
+  .tl-slot.filled.drop-over .tl-card { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  .tl-bank.drop-over {
+    background: var(--gold-soft);
+    border-radius: var(--r-md);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+  @media (prefers-reduced-motion: reduce) { .tl-card.tl-ghost { rotate: none; } }
   /* ---- מד התקדמות ---- */
   .tl-progress { margin-bottom: 20px; }
   .tl-progress-bar {
@@ -1503,13 +1541,13 @@ const QUIZZES = {
     "topic": "ברזל ב'",
     "q": "איזה מהאירועים הבאים קרה ראשון?",
     "options": [
-     "מרד יהוא (842 לפנה\"ס)",
-     "קרב קרקר (853 לפנה\"ס)",
-     "מסע שישק (925 לפנה\"ס)",
-     "נפילת שומרון (720 לפנה\"ס)"
+     "מרד יהוא",
+     "קרב קרקר",
+     "מסע שישק",
+     "נפילת שומרון"
     ],
     "correct": 2,
-    "exp": "מסע שישק הוא המוקדם מבין ארבעת האירועים."
+    "exp": "הסדר: מסע שישק 925 ← קרב קרקר 853 ← מרד יהוא 842 ← נפילת שומרון 722/720, הכול לפנה\"ס."
    },
    {
     "type": "mc",
@@ -1635,13 +1673,13 @@ const QUIZZES = {
     "topic": "ברזל ב'",
     "q": "איזה משני האירועים קרה קודם?",
     "options": [
-     "נפילת שומרון (720 לפנה\"ס)",
-     "קרב קרקר (853 לפנה\"ס)",
+     "נפילת שומרון",
+     "קרב קרקר",
      "שניהם קרו באותה שנה",
      "אי אפשר לדעת"
     ],
     "correct": 1,
-    "exp": "קרב קרקר קדם בכ-130 שנה לנפילת שומרון."
+    "exp": "קרב קרקר 853 לפנה\"ס, נפילת שומרון 722/720 לפנה\"ס — פער של כ-130 שנה."
    },
    {
     "type": "mc",
@@ -1719,13 +1757,13 @@ const QUIZZES = {
     "topic": "יהדות",
     "q": "מי מבין הבאים חי מאוחר יותר?",
     "options": [
-     "רש\"י (מאה 11)",
-     "הרמב\"ם (מאה 12)",
-     "רבי יהודה הנשיא (מאה 2–3)",
-     "רב סעדיה גאון (מאה 10)"
+     "רש\"י",
+     "הרמב\"ם",
+     "רבי יהודה הנשיא",
+     "רב סעדיה גאון"
     ],
     "correct": 1,
-    "exp": "הרמב\"ם, מחבר 'היד החזקה', חי במאה ה-12."
+    "exp": "הסדר: רבי יהודה הנשיא (מאה 2–3) ← רב סעדיה גאון (מאה 10) ← רש\"י (מאה 11) ← הרמב\"ם (מאה 12), מחבר 'היד החזקה'."
    },
    {
     "type": "fill",
@@ -1820,11 +1858,11 @@ const QUIZZES = {
     "options": [
      "אי אפשר לדעת",
      "באותה מאה",
-     "קודם (מאות 13–14)",
+     "קודם",
      "מאוחר יותר"
     ],
     "correct": 2,
-    "exp": "השולחן ערוך מבוסס על מבנה ארבעה הטורים, כ-200 שנה אחריהם."
+    "exp": "ארבעה טורים — מאות 13–14; שולחן ערוך — מאה 16. השולחן ערוך בנוי על מבנה ארבעת הטורים, כ-200 שנה אחריהם."
    },
    {
     "type": "fill",
@@ -1851,13 +1889,13 @@ const QUIZZES = {
     "topic": "יהדות",
     "q": "מי מהחכמים הבאים חי הכי מוקדם?",
     "options": [
-     "רש\"י (מאה 11)",
-     "רבי יוסף קארו (מאה 16)",
-     "רבי יהודה הנשיא (מאה 2–3)",
-     "הרמב\"ם (מאה 12)"
+     "רש\"י",
+     "רבי יוסף קארו",
+     "רבי יהודה הנשיא",
+     "הרמב\"ם"
     ],
     "correct": 2,
-    "exp": "המוקדם מבין ארבעת החכמים."
+    "exp": "הסדר: רבי יהודה הנשיא (מאה 2–3, עורך המשנה) ← רש\"י (מאה 11) ← הרמב\"ם (מאה 12) ← רבי יוסף קארו (מאה 16, השולחן ערוך)."
    },
    {
     "type": "fill",
@@ -2034,25 +2072,25 @@ const QUIZZES = {
     "topic": "נצרות",
     "q": "איזה אירוע קרה קודם?",
     "options": [
-     "הרפורמציה הפרוטסטנטית (1517)",
+     "הרפורמציה הפרוטסטנטית",
      "שניהם באותה שנה",
      "אי אפשר לדעת",
-     "הפילוג הגדול (1054)"
+     "הפילוג הגדול"
     ],
     "correct": 3,
-    "exp": "הפילוג הגדול קדם בכ-460 שנה לרפורמציה."
+    "exp": "הפילוג הגדול 1054, הרפורמציה 1517 — פער של כ-460 שנה."
    },
    {
     "type": "mc",
     "topic": "נצרות",
     "q": "מי משלושת האירועים הבאים הוא המוקדם ביותר?",
     "options": [
-     "ועידת ניקאה (325)",
-     "הרפורמציה (1517)",
-     "הפילוג הגדול (1054)"
+     "ועידת ניקאה",
+     "הרפורמציה",
+     "הפילוג הגדול"
     ],
     "correct": 0,
-    "exp": "המוקדם משלושת האירועים."
+    "exp": "הסדר: ועידת ניקאה 325 ← הפילוג הגדול 1054 ← הרפורמציה 1517."
    },
    {
     "type": "mc",
@@ -2322,13 +2360,13 @@ const QUIZZES = {
     "topic": "גבולות",
     "q": "מה מהבאים קרה ראשון?",
     "options": [
-     "כיבוש ירושלים בידי הצלבנים (1099)",
-     "מרד בר כוכבא (132–135 לספירה)",
-     "כיבוש אלכסנדר מוקדון (333 לפנה\"ס)",
-     "חורבן בית שני (70 לספירה)"
+     "כיבוש ירושלים בידי הצלבנים",
+     "מרד בר כוכבא",
+     "כיבוש אלכסנדר מוקדון",
+     "חורבן בית שני"
     ],
     "correct": 2,
-    "exp": "המוקדם מבין ארבעת האירועים."
+    "exp": "הסדר: אלכסנדר מוקדון 333 לפנה\"ס ← חורבן בית שני 70 לספירה ← מרד בר כוכבא 132–135 ← הצלבנים בירושלים 1099."
    },
    {
     "type": "fill",
@@ -4748,6 +4786,130 @@ function returnToBank(slotIndex) {
   drawTimeline();
 }
 
+/* ---------------- גרירה אמיתית: עכבר, מגע ועט דרך Pointer Events ----------------
+   הקשה קצרה ממשיכה לעבוד כמו קודם (בחירה והצבה), כדי לא לשבור את מי
+   שכבר רגיל לזה ואת הניווט במקלדת. גרירה מתחילה רק אחרי תזוזה של 8 פיקסלים. */
+
+const TL_DRAG_THRESHOLD = 8;
+let tlDrag = null;
+let tlJustDragged = false;
+
+function tlClearDropHints() {
+  document.querySelectorAll(".tl-slot.drop-over").forEach(function (el) { el.classList.remove("drop-over"); });
+  document.querySelectorAll(".tl-bank.drop-over").forEach(function (el) { el.classList.remove("drop-over"); });
+}
+
+function tlEndDragVisuals() {
+  if (tlDrag && tlDrag.ghost && tlDrag.ghost.parentNode) tlDrag.ghost.parentNode.removeChild(tlDrag.ghost);
+  if (tlDrag && tlDrag.card) tlDrag.card.classList.remove("tl-dragging");
+  document.body.classList.remove("tl-drag-on");
+  tlClearDropHints();
+}
+
+/* מעביר פריט אל משבצת. משבצת תפוסה — מחליפים ביניהם, וכך אפשר
+   לסדר מחדש בחופשיות בלי להחזיר קודם למאגר. */
+function tlDropOnSlot(idx, from, toSlot) {
+  if (timelineState.checked) return;
+  const occupant = timelineState.slots[toSlot];
+  if (from.type === "slot") {
+    if (from.slot === toSlot) { drawTimeline(); return; }
+    timelineState.slots[from.slot] = occupant;
+    timelineState.slots[toSlot] = idx;
+  } else {
+    timelineState.bank = timelineState.bank.filter(function (v) { return v !== idx; });
+    if (occupant !== null && occupant !== undefined) timelineState.bank.push(occupant);
+    timelineState.slots[toSlot] = idx;
+  }
+  timelineState.selected = null;
+  drawTimeline();
+}
+
+function tlPointerDown(e, card, idx, slotIndex) {
+  if (timelineState.checked) return;
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  if (e.target.closest && e.target.closest(".tl-remove")) return;
+  tlDrag = {
+    idx: idx,
+    from: slotIndex === null ? { type: "bank" } : { type: "slot", slot: slotIndex },
+    x0: e.clientX, y0: e.clientY,
+    card: card, ghost: null, active: false, over: null,
+    pointerId: e.pointerId,
+  };
+  try { card.setPointerCapture(e.pointerId); } catch (err) {}
+}
+
+function tlBeginGhost() {
+  const card = tlDrag.card;
+  const r = card.getBoundingClientRect();
+  const g = card.cloneNode(true);
+  g.classList.add("tl-ghost");
+  g.classList.remove("selected");
+  g.style.width = r.width + "px";
+  g.style.height = r.height + "px";
+  tlDrag.offX = tlDrag.x0 - r.left;
+  tlDrag.offY = tlDrag.y0 - r.top;
+  document.body.appendChild(g);
+  tlDrag.ghost = g;
+  tlDrag.active = true;
+  card.classList.add("tl-dragging");
+  document.body.classList.add("tl-drag-on");
+  const sel = window.getSelection && window.getSelection();
+  if (sel && sel.removeAllRanges) sel.removeAllRanges();
+}
+
+function tlPointerMove(e) {
+  if (!tlDrag || e.pointerId !== tlDrag.pointerId) return;
+  const dx = e.clientX - tlDrag.x0, dy = e.clientY - tlDrag.y0;
+  if (!tlDrag.active) {
+    if (Math.sqrt(dx * dx + dy * dy) < TL_DRAG_THRESHOLD) return;
+    tlBeginGhost();
+  }
+  e.preventDefault();
+  tlDrag.ghost.style.transform =
+    "translate(" + (e.clientX - tlDrag.offX) + "px," + (e.clientY - tlDrag.offY) + "px)";
+
+  tlClearDropHints();
+  tlDrag.over = null;
+  const under = document.elementFromPoint(e.clientX, e.clientY);
+  if (!under || !under.closest) return;
+  const slot = under.closest(".tl-slot");
+  if (slot && slot.dataset.slot !== undefined) {
+    slot.classList.add("drop-over");
+    tlDrag.over = { type: "slot", slot: +slot.dataset.slot };
+    return;
+  }
+  const bank = under.closest(".tl-bank");
+  if (bank && tlDrag.from.type === "slot") {
+    bank.classList.add("drop-over");
+    tlDrag.over = { type: "bank" };
+  }
+}
+
+function tlPointerUp(e) {
+  if (!tlDrag || e.pointerId !== tlDrag.pointerId) return;
+  const st = tlDrag;
+  tlEndDragVisuals();
+  tlDrag = null;
+  if (!st.active) return;                 // הקשה בלבד — ה-click הרגיל יטפל
+  tlJustDragged = true;                   // ולכן צריך לבטל את ה-click שיגיע אחרי גרירה
+  setTimeout(function () { tlJustDragged = false; }, 0);
+  if (!st.over) { drawTimeline(); return; }
+  if (st.over.type === "bank") {
+    if (st.from.type === "slot") returnToBank(st.from.slot);
+    else drawTimeline();
+    return;
+  }
+  tlDropOnSlot(st.idx, st.from, st.over.slot);
+}
+
+function tlPointerCancel(e) {
+  if (!tlDrag || e.pointerId !== tlDrag.pointerId) return;
+  const wasActive = tlDrag.active;
+  tlEndDragVisuals();
+  tlDrag = null;
+  if (wasActive) drawTimeline();
+}
+
 function buildTlCard(idx, slotIndex) {
   const card = document.createElement("div");
   card.className = "tl-card";
@@ -4775,9 +4937,18 @@ function buildTlCard(idx, slotIndex) {
     rm.onclick = (e) => { e.stopPropagation(); returnToBank(slotIndex); };
     card.appendChild(rm);
   }
+  if (!timelineState.checked) {
+    card.setAttribute("draggable", "false");   // הגרירה שלנו, לא של הדפדפן
+    card.addEventListener("pointerdown", (e) => tlPointerDown(e, card, idx, slotIndex));
+    card.addEventListener("pointermove", tlPointerMove);
+    card.addEventListener("pointerup", tlPointerUp);
+    card.addEventListener("pointercancel", tlPointerCancel);
+    card.addEventListener("dragstart", (e) => e.preventDefault());
+  }
   card.onclick = (e) => {
     e.stopPropagation();
     if (timelineState.checked) return;
+    if (tlJustDragged) return;                 // זו הייתה גרירה, לא הקשה
     if (slotIndex !== null) {
       returnToBank(slotIndex);
     } else {
@@ -4807,10 +4978,10 @@ function drawTimeline() {
     steps.innerHTML =
       '<div class="tl-step' + (timelineState.selected === null ? " now" : "") + '">' +
         '<span class="tl-step-num">1</span>' +
-        '<span>בחרו פריט מהרשימה שלמטה — הוא ייצבע בזהב</span></div>' +
+        '<span>גררו פריט מהרשימה שלמטה אל משבצת בציר — או הקישו עליו והוא ייצבע בזהב</span></div>' +
       '<div class="tl-step' + (timelineState.selected !== null ? " now" : "") + '">' +
         '<span class="tl-step-num">2</span>' +
-        '<span>הקישו על משבצת ריקה בציר, לפי הסדר הכרונולוגי (1 = המוקדם ביותר)</span></div>' +
+        '<span>סדרו לפי הזמן (1 = המוקדם ביותר). אפשר לגרור בין משבצות — גרירה על משבצת תפוסה מחליפה ביניהן</span></div>' +
       '<div class="tl-step"><span class="tl-step-num">3</span>' +
         '<span>אחרי שכל המשבצות מלאות — לחצו "בדוק סדר"</span></div>';
     app.appendChild(steps);
@@ -4828,6 +4999,7 @@ function drawTimeline() {
   timelineState.slots.forEach((val, i) => {
     const slot = document.createElement("div");
     slot.className = "tl-slot" + (val === null ? " empty" : " filled");
+    slot.dataset.slot = String(i);
     const num = document.createElement("span");
     num.className = "tl-slot-num";
     num.textContent = String(i + 1);
