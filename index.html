@@ -979,43 +979,113 @@
 
   .ltr-num { direction: ltr; unicode-bidi: isolate; }
   /* ============================ סקציית יהדות ============================ */
+
+  /* --- מתג תצוגות --- */
+  .jd-views {
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--card); border: 1px solid var(--line-soft);
+    border-radius: 999px; margin: 0 auto 22px; width: fit-content; max-width: 100%;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .jd-view {
+    border: 0; background: transparent; color: var(--sub);
+    font-family: inherit; font-size: 13.5px; font-weight: 700;
+    padding: 10px 18px; min-height: 44px; border-radius: 999px;
+    cursor: pointer; transition: background .16s, color .16s;
+  }
+  .jd-view:hover { color: var(--ink); }
+  .jd-view.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+  /* --- סרגל כלים --- */
+  .jd-toolbar {
+    display: flex; flex-wrap: wrap; gap: 9px; align-items: center;
+    justify-content: space-between; margin-bottom: 18px;
+  }
+  .jd-focus, .jd-allbtn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--line); background: var(--surface); color: var(--sub);
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    padding: 9px 15px; min-height: 44px; border-radius: 999px; cursor: pointer;
+    transition: border-color .16s, background .16s, color .16s;
+  }
+  .jd-focus svg, .jd-allbtn svg { width: 15px; height: 15px; flex: 0 0 auto; }
+  .jd-focus:hover, .jd-allbtn:hover { border-color: var(--gold); color: var(--ink); }
+  .jd-focus.on {
+    background: color-mix(in srgb, var(--gold) 13%, transparent);
+    border-color: var(--gold); color: var(--gold);
+  }
+  .jd-tally {
+    font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--sub);
+  }
+  .jd-focus.on .jd-tally { background: color-mix(in srgb, var(--gold) 20%, transparent); color: var(--gold); }
+
+  /* --- השרשרת --- */
   .jd-chain { position: relative; padding-inline-start: 26px; }
   .jd-chain::before {
     content: ""; position: absolute; inset-block: 10px 6px; inset-inline-start: 7px;
     width: 2px; background: linear-gradient(var(--line), var(--line-soft));
   }
+
+  .jd-eragroup { margin-bottom: 6px; }
   .jd-era {
-    position: relative; display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
-    margin: 30px 0 13px;
+    position: relative; display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+    width: 100%; text-align: start; border: 0; background: var(--bg);
+    font-family: inherit; color: inherit; cursor: pointer;
+    padding: 13px 0 11px; min-height: 44px;
+    position: sticky; top: 0; z-index: 3;
   }
-  .jd-era:first-child { margin-top: 2px; }
+  .jd-era::after {
+    content: ""; position: absolute; inset-inline: -26px 0; bottom: 0;
+    height: 1px; background: var(--line-soft);
+  }
   .jd-era::before {
-    content: ""; position: absolute; inset-inline-start: -26px; top: 4px;
+    content: ""; position: absolute; inset-inline-start: -26px; top: 16px;
     width: 16px; height: 16px; border-radius: 50%;
     background: var(--ec); border: 3px solid var(--bg); box-sizing: content-box;
   }
+  .jd-era-txt { min-width: 0; }
   .jd-era-name { font-weight: 800; font-size: 16px; color: var(--ec); }
-  .jd-era-range { font-size: 12px; color: var(--sub); font-weight: 600; }
+  .jd-era-range { display: block; font-size: 11.5px; color: var(--sub); font-weight: 600; }
+  @media (min-width: 640px) {
+    .jd-era-txt { display: flex; align-items: baseline; gap: 9px; }
+    .jd-era-range { display: inline; font-size: 12px; }
+  }
+  .jd-era-count {
+    margin-inline-start: auto; font-size: 11.5px; font-weight: 800;
+    padding: 2px 9px; border-radius: 999px;
+    background: color-mix(in srgb, var(--ec) 13%, transparent); color: var(--ec);
+  }
+  .jd-chev {
+    flex: 0 0 auto; width: 16px; height: 16px; color: var(--sub);
+    transition: transform .2s ease;
+  }
+  /* RTL: מקופל מצביע שמאלה, לכיוון קריאת הטקסט */
+  .jd-eragroup.closed .jd-chev { transform: rotate(90deg); }
+  .jd-era:hover .jd-era-name { text-decoration: underline; text-underline-offset: 3px; }
 
+  .jd-erabody { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .24s ease; }
+  .jd-eragroup.closed .jd-erabody { grid-template-rows: 0fr; }
+  .jd-erabody-inner { overflow: hidden; min-height: 0; padding-top: 11px; }
+  .jd-eragroup.closed .jd-erabody-inner { padding-top: 0; }
+
+  /* פריט מרכזי — כרטיס מלא */
   .jd-item {
     position: relative; display: block; width: 100%; text-align: start;
     background: var(--surface); border: 1px solid var(--line);
+    border-inline-start: 4px solid var(--ec);
+    background: color-mix(in srgb, var(--ec) 5%, var(--surface));
     border-radius: var(--r-md); padding: 13px 17px; margin-bottom: 9px;
-    cursor: pointer; font-family: inherit; color: inherit;
-    transition: border-color .14s, box-shadow .14s, background .14s;
+    cursor: pointer; font-family: inherit; color: inherit; min-height: 44px;
+    transition: border-color .14s, box-shadow .14s;
   }
   .jd-item::before {
     content: ""; position: absolute; inset-inline-start: -24px; top: 20px;
     width: 9px; height: 9px; border-radius: 50%;
-    background: var(--surface); border: 2px solid var(--ec); box-sizing: content-box;
+    background: var(--ec); border: 2px solid var(--ec); box-sizing: content-box;
   }
   .jd-item:hover { border-color: var(--ec); box-shadow: var(--shadow); }
   .jd-item:active { transform: scale(0.995); }
-  .jd-item.key {
-    border-inline-start: 4px solid var(--ec);
-    background: color-mix(in srgb, var(--ec) 5%, var(--surface));
-  }
-  .jd-item.key::before { background: var(--ec); }
   .jd-year { display: block; font-size: 11.5px; font-weight: 700; color: var(--ec); }
   .jd-name { display: block; font-size: 16.5px; font-weight: 800; margin: 1px 0 3px; }
   .jd-meta { display: block; font-size: 12.5px; color: var(--sub); font-weight: 500; }
@@ -1024,7 +1094,33 @@
     border-radius: 999px; font-size: 10px; font-weight: 800; vertical-align: 2px;
     background: color-mix(in srgb, var(--ec) 15%, transparent); color: var(--ec);
   }
-  .jd-count { text-align: center; font-size: 12.5px; color: var(--sub); margin-top: 18px; font-weight: 600; }
+
+  /* פריט רקע — שורה דקה */
+  .jd-item.slim {
+    background: transparent; border: 0; border-radius: var(--r-sm);
+    padding: 10px 12px; margin-bottom: 2px; min-height: 44px;
+    display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+  }
+  .jd-item.slim::before {
+    background: var(--surface); border-color: var(--line); top: 17px;
+  }
+  .jd-item.slim:hover { background: var(--card); border: 0; box-shadow: none; }
+  .jd-item.slim .jd-year { font-size: 11px; color: var(--sub); font-weight: 700; flex: 0 0 auto; }
+  .jd-item.slim .jd-name { font-size: 14px; font-weight: 700; margin: 0; display: inline; }
+  .jd-item.slim .jd-meta { font-size: 12px; display: inline; }
+  /* בצר: שורת הרקע נשארת שורה אחת, כדי שההבדל מול כרטיס ליבה יישאר הבדל של גודל */
+  @media (max-width: 639px) {
+    .jd-item.slim { flex-wrap: nowrap; align-items: center; }
+    .jd-item.slim .jd-meta { display: none; }
+    .jd-item.slim .jd-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  .jd-count { text-align: center; font-size: 12.5px; color: var(--sub); margin-top: 20px; font-weight: 600; }
+  .jd-empty { text-align: center; color: var(--sub); font-size: 13.5px; padding: 26px 12px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jd-erabody, .jd-chev { transition: none; }
+  }
 
   /* פרטים בגיליון */
   .jd-facts { margin: 14px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 7px 14px; }
@@ -1039,8 +1135,7 @@
     border-radius: var(--r-md); padding: 14px 16px; position: relative;
   }
   .jd-center-step {
-    font-size: 10.5px; font-weight: 800; color: var(--gold);
-    letter-spacing: .05em;
+    font-size: 10.5px; font-weight: 800; color: var(--gold); letter-spacing: .05em;
   }
   .jd-center h4 { margin: 2px 0 3px; font-size: 16px; font-weight: 800; }
   .jd-center-when { font-size: 11.5px; color: var(--sub); font-weight: 700; margin-bottom: 6px; }
@@ -1057,7 +1152,7 @@
   .jd-fcard p { margin: 0; font-size: 13.5px; line-height: 1.6; font-weight: 600; }
   .jd-fnote { margin-top: 7px !important; font-size: 12.5px !important; color: var(--sub); font-weight: 500 !important; }
 
-  .jd-blockhead { margin: 40px 0 14px; }
+  .jd-blockhead { margin: 0 0 16px; }
   .jd-blockhead h3 { margin: 0 0 3px; font-size: 19px; font-weight: 800; }
   .jd-blockhead p { margin: 0; font-size: 13px; color: var(--sub); }
 </style>
@@ -5368,7 +5463,16 @@ function renderArchSection() {
 
 /* ============================= יהדות ============================= */
 
-let judFilter = "all";
+let judView = "chain";        // chain | centers | foundations
+let judFocus = true;          // ברירת מחדל: רק מה שחייבים לדעת
+let judClosed = {};           // תקופות מקופלות
+
+const JD_ICONS = {
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.5 2.6 5.6 6 .8-4.4 4.2 1.1 6.1L12 17.3 6.7 20.2l1.1-6.1L3.4 9.9l6-.8Z"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  fold: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5-5 5 5M7 9l5-5 5 5"/></svg>',
+  unfold: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 9 5 5 5-5M7 15l5 5 5-5"/></svg>',
+};
 
 function openJudaismSheet(idx) {
   const it = JUDAISM.chain[idx];
@@ -5400,6 +5504,10 @@ function openJudaismSheet(idx) {
   );
 }
 
+function judKeyCount() {
+  return JUDAISM.chain.filter(function (it) { return it.important; }).length;
+}
+
 function renderJudaismSection() {
   mode = "judaism";
   updateScorebar();
@@ -5416,110 +5524,210 @@ function renderJudaismSection() {
   sub.textContent = "שרשרת אחת מחתימת התנ\"ך ועד ימינו: מה נכתב, בידי מי, מתי, איפה — והיכן בארץ אפשר לעמוד על זה";
   app.appendChild(sub);
 
-  /* --- סינון לפי תקופה --- */
-  const chips = document.createElement("div");
-  chips.className = "arch-chips";
-  const chain = document.createElement("div");
-  chain.className = "jd-chain";
+  /* ---------- מתג תצוגות ---------- */
+  const views = document.createElement("div");
+  views.className = "jd-views";
+  views.setAttribute("role", "tablist");
+  const body = document.createElement("div");
 
-  const eraKeys = Object.keys(JUDAISM.eras);
-  const options = [["all", "כל התקופות", "var(--sub)"]].concat(
-    eraKeys.map((k) => [k, JUDAISM.eras[k].label, JUDAISM.eras[k].color])
-  );
+  const VIEWS = [
+    ["chain", "שרשרת הספרים"],
+    ["centers", "מרכזי התורה"],
+    ["foundations", "יסודות"],
+  ];
+  VIEWS.forEach(function (v) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "jd-view" + (judView === v[0] ? " on" : "");
+    b.textContent = v[1];
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", judView === v[0] ? "true" : "false");
+    b.onclick = function () {
+      judView = v[0];
+      views.querySelectorAll(".jd-view").forEach(function (x, i) {
+        const on = VIEWS[i][0] === judView;
+        x.classList.toggle("on", on);
+        x.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      drawBody();
+    };
+    views.appendChild(b);
+  });
+  app.appendChild(views);
+  app.appendChild(body);
 
+  /* ---------- תצוגת השרשרת ---------- */
   function drawChain() {
-    chain.innerHTML = "";
-    let shown = 0;
-    let lastEra = null;
-    JUDAISM.chain.forEach((it, idx) => {
-      if (judFilter !== "all" && it.era !== judFilter) return;
-      const era = JUDAISM.eras[it.era];
-      if (it.era !== lastEra) {
-        lastEra = it.era;
-        const band = document.createElement("div");
-        band.className = "jd-era";
-        band.style.setProperty("--ec", era.color);
-        band.innerHTML =
-          '<span class="jd-era-name">' + era.label + '</span>' +
-          '<span class="jd-era-range">' + ltrNums(era.range) + '</span>';
-        chain.appendChild(band);
-      }
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "jd-item" + (it.important ? " key" : "");
-      btn.style.setProperty("--ec", era.color);
-      btn.innerHTML =
-        '<span class="jd-year">' + ltrNums(it.yearLabel) + '</span>' +
-        '<span class="jd-name">' + it.title +
-          (it.important ? '<span class="jd-flag">לזכור</span>' : '') +
-        '</span>' +
-        '<span class="jd-meta">' + ltrNums(it.author + (it.where ? ' · ' + it.where : '')) + '</span>';
-      btn.onclick = () => openJudaismSheet(idx);
-      chain.appendChild(btn);
-      shown++;
-    });
-    const count = document.createElement("div");
-    count.className = "jd-count";
-    count.textContent = shown + " פריטים בשרשרת";
-    chain.appendChild(count);
+    const toolbar = document.createElement("div");
+    toolbar.className = "jd-toolbar";
+
+    const focusBtn = document.createElement("button");
+    focusBtn.type = "button";
+    focusBtn.className = "jd-focus" + (judFocus ? " on" : "");
+    focusBtn.setAttribute("aria-pressed", judFocus ? "true" : "false");
+    const nKey = judKeyCount(), nAll = JUDAISM.chain.length;
+    focusBtn.innerHTML = JD_ICONS.star + "רק מה שחייבים לדעת" +
+      '<span class="jd-tally">' + (judFocus ? nKey : nAll) + " / " + nAll + "</span>";
+
+    const foldBtn = document.createElement("button");
+    foldBtn.type = "button";
+    foldBtn.className = "jd-allbtn";
+
+    const chain = document.createElement("div");
+    chain.className = "jd-chain";
+
+    function anyOpen() {
+      return Object.keys(JUDAISM.eras).some(function (k) { return !judClosed[k]; });
+    }
+    function syncFold() {
+      const open = anyOpen();
+      foldBtn.innerHTML = (open ? JD_ICONS.fold : JD_ICONS.unfold) + (open ? "כווץ הכול" : "פתח הכול");
+    }
+
+    function drawChainList() {
+      chain.innerHTML = "";
+      let shown = 0;
+
+      Object.keys(JUDAISM.eras).forEach(function (eraKey) {
+        const era = JUDAISM.eras[eraKey];
+        const items = JUDAISM.chain
+          .map(function (it, idx) { return { it: it, idx: idx }; })
+          .filter(function (o) {
+            return o.it.era === eraKey && (!judFocus || o.it.important);
+          });
+        if (!items.length) return;
+
+        const group = document.createElement("section");
+        group.className = "jd-eragroup" + (judClosed[eraKey] ? " closed" : "");
+        group.style.setProperty("--ec", era.color);
+
+        const head = document.createElement("button");
+        head.type = "button";
+        head.className = "jd-era";
+        head.setAttribute("aria-expanded", judClosed[eraKey] ? "false" : "true");
+        head.innerHTML =
+          '<span class="jd-chev">' + JD_ICONS.chev + '</span>' +
+          '<span class="jd-era-txt">' +
+            '<span class="jd-era-name">' + era.label + '</span>' +
+            '<span class="jd-era-range">' + ltrNums(era.range) + '</span>' +
+          '</span>' +
+          '<span class="jd-era-count">' + items.length + '</span>';
+        head.onclick = function () {
+          judClosed[eraKey] = !judClosed[eraKey];
+          group.classList.toggle("closed", judClosed[eraKey]);
+          head.setAttribute("aria-expanded", judClosed[eraKey] ? "false" : "true");
+          syncFold();
+        };
+        group.appendChild(head);
+
+        const bodyWrap = document.createElement("div");
+        bodyWrap.className = "jd-erabody";
+        const inner = document.createElement("div");
+        inner.className = "jd-erabody-inner";
+
+        items.forEach(function (o) {
+          const it = o.it;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "jd-item" + (it.important ? "" : " slim");
+          btn.innerHTML =
+            '<span class="jd-year">' + ltrNums(it.yearLabel) + '</span>' +
+            '<span class="jd-name">' + it.title +
+              (it.important ? '<span class="jd-flag">לזכור</span>' : '') +
+            '</span>' +
+            '<span class="jd-meta">' + ltrNums(it.author + (it.where ? " · " + it.where : "")) + '</span>';
+          btn.onclick = function () { openJudaismSheet(o.idx); };
+          inner.appendChild(btn);
+          shown++;
+        });
+
+        bodyWrap.appendChild(inner);
+        group.appendChild(bodyWrap);
+        chain.appendChild(group);
+      });
+
+      const count = document.createElement("div");
+      count.className = "jd-count";
+      count.textContent = judFocus
+        ? shown + " פריטי ליבה — לחצו על הכפתור למעלה כדי לראות את כל " + JUDAISM.chain.length
+        : shown + " פריטים בשרשרת";
+      chain.appendChild(count);
+      syncFold();
+    }
+
+    focusBtn.onclick = function () {
+      judFocus = !judFocus;
+      focusBtn.classList.toggle("on", judFocus);
+      focusBtn.setAttribute("aria-pressed", judFocus ? "true" : "false");
+      focusBtn.innerHTML = JD_ICONS.star + "רק מה שחייבים לדעת" +
+        '<span class="jd-tally">' + (judFocus ? nKey : nAll) + " / " + nAll + "</span>";
+      drawChainList();
+    };
+    foldBtn.onclick = function () {
+      const close = anyOpen();
+      Object.keys(JUDAISM.eras).forEach(function (k) { judClosed[k] = close; });
+      chain.querySelectorAll(".jd-eragroup").forEach(function (g) { g.classList.toggle("closed", close); });
+      chain.querySelectorAll(".jd-era").forEach(function (b) { b.setAttribute("aria-expanded", close ? "false" : "true"); });
+      syncFold();
+    };
+
+    toolbar.appendChild(focusBtn);
+    toolbar.appendChild(foldBtn);
+    body.appendChild(toolbar);
+    drawChainList();
+    body.appendChild(chain);
   }
 
-  options.forEach(([key, label, color]) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "arch-chip" + (judFilter === key ? " on" : "");
-    chip.style.setProperty("--ec", color);
-    chip.textContent = label;
-    chip.onclick = () => {
-      judFilter = key;
-      chips.querySelectorAll(".arch-chip").forEach((c) => c.classList.remove("on"));
-      chip.classList.add("on");
-      drawChain();
-    };
-    chips.appendChild(chip);
-  });
-  app.appendChild(chips);
-  drawChain();
-  app.appendChild(chain);
+  /* ---------- מרכזי התורה ---------- */
+  function drawCenters() {
+    const ch = document.createElement("div");
+    ch.className = "jd-blockhead";
+    ch.innerHTML = "<h3>לאן נדד מרכז התורה</h3><p>אותה שרשרת, הפעם לפי מפה: כל תחנה ומה נוצר בה</p>";
+    body.appendChild(ch);
 
-  /* --- מרכזי התורה --- */
-  const ch = document.createElement("div");
-  ch.className = "jd-blockhead";
-  ch.innerHTML = "<h3>מרכזי התורה — לאן נדד המרכז</h3><p>אותה שרשרת, הפעם לפי מפה: כל תחנה ומה נוצר בה</p>";
-  app.appendChild(ch);
+    const centers = document.createElement("div");
+    centers.className = "jd-centers";
+    JUDAISM.centers.forEach(function (c, i) {
+      const card = document.createElement("div");
+      card.className = "jd-center";
+      card.innerHTML =
+        '<div class="jd-center-step">תחנה ' + (i + 1) + '</div>' +
+        '<h4>' + c.place + '</h4>' +
+        '<div class="jd-center-when">' + ltrNums(c.when) + '</div>' +
+        '<div class="jd-center-what">' + ltrNums(c.what) + '</div>';
+      centers.appendChild(card);
+    });
+    body.appendChild(centers);
+  }
 
-  const centers = document.createElement("div");
-  centers.className = "jd-centers";
-  JUDAISM.centers.forEach((c, i) => {
-    const card = document.createElement("div");
-    card.className = "jd-center";
-    card.innerHTML =
-      '<div class="jd-center-step">תחנה ' + (i + 1) + '</div>' +
-      '<h4>' + c.place + '</h4>' +
-      '<div class="jd-center-when">' + ltrNums(c.when) + '</div>' +
-      '<div class="jd-center-what">' + ltrNums(c.what) + '</div>';
-    centers.appendChild(card);
-  });
-  app.appendChild(centers);
+  /* ---------- יסודות ---------- */
+  function drawFoundations() {
+    const fh = document.createElement("div");
+    fh.className = "jd-blockhead";
+    fh.innerHTML = "<h3>יסודות שחייבים לדעת</h3><p>העובדות שנשאלות ישירות, ולצדן המלכודת שנלווית לכל אחת</p>";
+    body.appendChild(fh);
 
-  /* --- יסודות --- */
-  const fh = document.createElement("div");
-  fh.className = "jd-blockhead";
-  fh.innerHTML = "<h3>יסודות שחייבים לדעת</h3><p>העובדות שנשאלות ישירות, ולצדן המלכודת שנלווית לכל אחת</p>";
-  app.appendChild(fh);
+    const found = document.createElement("div");
+    found.className = "jd-found";
+    JUDAISM.foundations.forEach(function (f) {
+      const card = document.createElement("div");
+      card.className = "jd-fcard";
+      card.innerHTML =
+        '<h4>' + f.q + '</h4>' +
+        '<p>' + ltrNums(f.a) + '</p>' +
+        (f.note ? '<p class="jd-fnote">' + ltrNums(f.note) + '</p>' : '');
+      found.appendChild(card);
+    });
+    body.appendChild(found);
+  }
 
-  const found = document.createElement("div");
-  found.className = "jd-found";
-  JUDAISM.foundations.forEach((f) => {
-    const card = document.createElement("div");
-    card.className = "jd-fcard";
-    card.innerHTML =
-      '<h4>' + f.q + '</h4>' +
-      '<p>' + ltrNums(f.a) + '</p>' +
-      (f.note ? '<p class="jd-fnote">' + ltrNums(f.note) + '</p>' : '');
-    found.appendChild(card);
-  });
-  app.appendChild(found);
+  function drawBody() {
+    body.innerHTML = "";
+    if (judView === "chain") drawChain();
+    else if (judView === "centers") drawCenters();
+    else drawFoundations();
+  }
+  drawBody();
 
   const back = document.createElement("div");
   back.className = "backlink";
