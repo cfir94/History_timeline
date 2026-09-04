@@ -1193,6 +1193,40 @@
   .jd-blockhead { margin: 0 0 16px; }
   .jd-blockhead h3 { margin: 0 0 3px; font-size: 19px; font-weight: 800; }
   .jd-blockhead p { margin: 0; font-size: 13px; color: var(--sub); }
+
+  /* Each embeddable entry point keeps the shared engine but gets its own
+     visual identity. The host site selects one with ?view=<name>. */
+  body[data-view="kings"] {
+    --bg: #f1e9dc; --surface: #fffaf1; --card: rgba(126,52,20,.055);
+    --line: rgba(126,52,20,.18); --line-soft: rgba(126,52,20,.1);
+    --title-1: #402014; --title-2: #b5541c; --gold: #c08418;
+  }
+  body[data-view="kings"] header { background: linear-gradient(120deg, #31170f, #71341d 58%, #153f39); }
+  body[data-view="archaeology"] {
+    --bg: #eee8db; --surface: #fffdf7; --card: rgba(88,64,40,.06);
+    --line: rgba(88,64,40,.2); --title-1: #30241a; --title-2: #9b5a20;
+    --gold: #9b5a20; --ev-find: #b46b1f; --ev-fort: #536d72;
+  }
+  body[data-view="archaeology"] header { background: linear-gradient(120deg, #252019, #59442d 62%, #796039); }
+  body[data-view="judaism"] {
+    --bg: #edf1f4; --surface: #fbfdff; --card: rgba(31,70,105,.05);
+    --line: rgba(31,70,105,.18); --line-soft: rgba(31,70,105,.1);
+    --ink: #14283b; --sub: #597084; --title-1: #14283b; --title-2: #1f6587;
+    --gold: #b48625; --israel: #1f6587;
+  }
+  body[data-view="judaism"] header { background: linear-gradient(120deg, #10283b, #194d6c 62%, #94701f); }
+  body[data-view="dating"] {
+    --bg: #eef5f3; --surface: #fbfffd; --card: rgba(20,111,91,.05);
+    --line: rgba(20,111,91,.18); --title-1: #103a33; --title-2: #167d69;
+    --gold: #bd7a12; --israel: #167d69;
+  }
+  body[data-view="dating"] header { background: linear-gradient(120deg, #0c332d, #176b5d 64%, #bd7a12); }
+  body[data-view="drag"] {
+    --bg: #eef1f8; --surface: #fcfdff; --card: rgba(54,74,139,.055);
+    --line: rgba(54,74,139,.18); --title-1: #1c2e5a; --title-2: #526cc2;
+    --gold: #c28b20; --israel: #526cc2;
+  }
+  body[data-view="drag"] header { background: linear-gradient(120deg, #172447, #3b4f91 64%, #7b5d9e); }
 </style>
 </head>
 <body>
@@ -1201,10 +1235,10 @@
   <div class="header-inner">
     <div class="header-row">
       <div>
-        <h1>ציר הזמן ההיסטורי — קורס מורי דרך</h1>
-        <div class="sub">תיארוך, אירועים ודמויות: להבין מה קדם למה</div>
+        <h1 id="app-title">ציר הזמן ההיסטורי — קורס מורי דרך</h1>
+        <div class="sub" id="app-subtitle">תיארוך, אירועים ודמויות: להבין מה קדם למה</div>
       </div>
-      <button type="button" class="home-btn" onclick="renderHome()" aria-label="חזרה למסך הראשי">
+      <button type="button" class="home-btn" onclick="returnFromView()" aria-label="חזרה למסך הראשי">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg>
         <span>מסך ראשי</span>
       </button>
@@ -4513,10 +4547,89 @@ const JUDAISM = {
 
 const app = document.getElementById("app");
 const scorebar = document.getElementById("scorebar");
+const appTitle = document.getElementById("app-title");
+const appSubtitle = document.getElementById("app-subtitle");
 
 let mode = null; // "home" | "quiz" | "timeline" | "kings"
 let quizState = { key: null, mcAnswers: {}, fillRatings: {} };
 let timelineState = { key: null, slots: [], bank: [], selected: null, checked: false };
+let activeEntryView = new URLSearchParams(window.location.search).get("view");
+
+const ENTRY_VIEWS = {
+  dating: {
+    title: "שאלוני תיארוך",
+    subtitle: "תאריכים, סדר אירועים ותקופות מקבילות",
+    section: "quizzes",
+    render: renderQuizSelect,
+  },
+  drag: {
+    title: "תרגול ציר זמן",
+    subtitle: "מסדרים תקופות, אירועים ודמויות במקום הנכון",
+    section: "quizzes",
+    render: renderTimelineSelect,
+  },
+  kings: {
+    title: "מלכי ישראל ויהודה",
+    subtitle: "מלכים, נביאים ואירועים על ציר משותף",
+    section: "timelines",
+    render: renderKingsTable,
+  },
+  archaeology: {
+    title: "ממצאים, מצורים וביצורים",
+    subtitle: "העדויות שמתארכות את תקופת המלכים",
+    section: "timelines",
+    render: renderArchSection,
+  },
+  judaism: {
+    title: "יהדות — ספרים, חכמים ומרכזים",
+    subtitle: "שרשרת המסירה ונדידת מרכזי התורה",
+    section: "timelines",
+    render: renderJudaismSection,
+  },
+};
+
+function showEntryView(view, updateUrl) {
+  const entry = ENTRY_VIEWS[view];
+  if (!entry) return renderHome();
+  activeEntryView = view;
+  document.body.dataset.view = view;
+  appTitle.textContent = entry.title;
+  appSubtitle.textContent = entry.subtitle;
+  if (updateUrl) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", view);
+    window.history.replaceState({}, "", url);
+  }
+  entry.render();
+}
+
+function returnFromView() {
+  if (activeEntryView && window.parent !== window) {
+    const section = ENTRY_VIEWS[activeEntryView].section;
+    window.parent.location.href = "/moreh-derech/" + section + "/";
+    return;
+  }
+  activeEntryView = null;
+  document.body.removeAttribute("data-view");
+  appTitle.textContent = "ציר הזמן ההיסטורי — קורס מורי דרך";
+  appSubtitle.textContent = "תיארוך, אירועים ודמויות: להבין מה קדם למה";
+  const url = new URL(window.location.href);
+  url.searchParams.delete("view");
+  window.history.replaceState({}, "", url);
+  renderHome();
+}
+
+function reportAttempt(detail) {
+  if (window.parent === window) return;
+  window.parent.postMessage({
+    type: "even-derech:historical-attempt",
+    quiz: detail.quiz,
+    quizLabel: detail.quizLabel,
+    category: detail.category,
+    correct: detail.correct,
+    total: detail.total,
+  }, "*");
+}
 
 function topicBucket(t) {
   const i = t.indexOf(" — ");
@@ -4583,7 +4696,7 @@ function renderQuizSelect() {
   const back = document.createElement("div");
   back.className = "backlink";
   back.textContent = "⟵ חזרה למסך הראשי";
-  back.onclick = renderHome;
+  back.onclick = returnFromView;
   const centerWrap = document.createElement("div");
   centerWrap.style.textAlign = "center";
   centerWrap.appendChild(back);
@@ -4691,6 +4804,19 @@ function renderQuizResults(key) {
   const quiz = QUIZZES[key];
   const { earned, possible } = computeQuizScore(key);
   const pct = Math.round((earned / possible) * 100);
+  const correctItems = quiz.items.filter((item, i) =>
+    item.type === "mc"
+      ? quizState.mcAnswers[i] === item.correct
+      : quizState.fillRatings[i] === 2
+  ).length;
+
+  reportAttempt({
+    quiz: "timeline-dating-" + key,
+    quizLabel: "שאלוני תיארוך — " + quiz.title,
+    category: quiz.title,
+    correct: correctItems,
+    total: quiz.items.length,
+  });
 
   const topics = {};
   quiz.items.forEach((item, i) => {
@@ -4749,7 +4875,7 @@ function renderTimelineSelect() {
   const back = document.createElement("div");
   back.className = "backlink";
   back.textContent = "⟵ חזרה למסך הראשי";
-  back.onclick = renderHome;
+  back.onclick = returnFromView;
   const centerWrap = document.createElement("div");
   centerWrap.style.textAlign = "center";
   centerWrap.appendChild(back);
@@ -5069,6 +5195,13 @@ function drawTimeline() {
     checkBtn.onclick = () => {
       if (timelineState.bank.length > 0) return;
       timelineState.checked = true;
+      reportAttempt({
+        quiz: "timeline-drag-" + timelineState.key,
+        quizLabel: "תרגול ציר זמן — " + t.title,
+        category: t.title,
+        correct: timelineState.slots.filter((value, index) => value === index).length,
+        total: t.nodes.length,
+      });
       drawTimeline();
     };
     controls.appendChild(checkBtn);
@@ -5537,7 +5670,7 @@ function renderKingsTable() {
   const back = document.createElement("div");
   back.className = "backlink";
   back.textContent = "⟵ חזרה למסך הראשי";
-  back.onclick = renderHome;
+  back.onclick = returnFromView;
   const centerWrap = document.createElement("div");
   centerWrap.style.textAlign = "center";
   centerWrap.appendChild(back);
@@ -5625,7 +5758,7 @@ function renderArchSection() {
   const back = document.createElement("div");
   back.className = "backlink";
   back.textContent = "⟵ חזרה למסך הראשי";
-  back.onclick = renderHome;
+  back.onclick = returnFromView;
   const centerWrap = document.createElement("div");
   centerWrap.style.textAlign = "center";
   centerWrap.appendChild(back);
@@ -5904,7 +6037,7 @@ function renderJudaismSection() {
   const back = document.createElement("div");
   back.className = "backlink";
   back.textContent = "⟵ חזרה למסך הראשי";
-  back.onclick = renderHome;
+  back.onclick = returnFromView;
   const centerWrap = document.createElement("div");
   centerWrap.style.textAlign = "center";
   centerWrap.appendChild(back);
@@ -5915,6 +6048,10 @@ function renderJudaismSection() {
 /* ============================= Home ============================= */
 
 function renderHome() {
+  activeEntryView = null;
+  document.body.removeAttribute("data-view");
+  appTitle.textContent = "ציר הזמן ההיסטורי — קורס מורי דרך";
+  appSubtitle.textContent = "תיארוך, אירועים ודמויות: להבין מה קדם למה";
   mode = "home";
   updateScorebar();
   app.innerHTML = "";
@@ -5938,25 +6075,26 @@ function renderHome() {
     scroll: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12a2 2 0 0 1 2 2V18a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18V5.5a2 2 0 0 1 2-2Z"/><path d="M8 8h8M8 11.5h8M8 15h5"/></svg>',
   };
   const cards = [
-    { icon: ICONS.calendar, accent: "var(--gold)", title: "שאלוני תיארוך", desc: "מתי הייתה כל תקופה, מה קרה קודם, ואיזו תקופה מקבילה לאיזו — לפי נושא.", fn: renderQuizSelect },
-    { icon: ICONS.compass, accent: "var(--israel)", title: "ציר זמן גרירה", desc: "הציבו תקופות, אירועים ודמויות במקומם הכרונולוגי הנכון על ציר הזמן.", fn: renderTimelineSelect },
-    { icon: ICONS.crown, accent: "var(--judah)", title: "מלכי ישראל ויהודה", desc: "גרף זמן מלא: כל המלכים על ציר משותף, לפי שנות מלכותם, הנביאים בני זמנם והאירועים שבתקופתם.", fn: renderKingsTable },
-    { icon: ICONS.stele, accent: "var(--ev-camp)", title: "ממצאים, מצורים וביצורים", desc: "מסעות וקרבות, כתובות וחרסים, תבליטים וחומות — מה נמצא, מתי, ובימי איזה מלך.", fn: renderArchSection },
-    { icon: ICONS.scroll, accent: "var(--ev-fort)", title: "יהדות — ספרים, חכמים ומרכזים", desc: "שרשרת אחת מחתימת התנ\"ך ועד ימינו: מה נכתב, בידי מי, מתי, איפה — ולאן נדד מרכז התורה.", fn: renderJudaismSection },
+    { key: "dating", icon: ICONS.calendar, accent: "var(--gold)", title: "שאלוני תיארוך", desc: "מתי הייתה כל תקופה, מה קרה קודם, ואיזו תקופה מקבילה לאיזו — לפי נושא." },
+    { key: "drag", icon: ICONS.compass, accent: "var(--israel)", title: "ציר זמן גרירה", desc: "הציבו תקופות, אירועים ודמויות במקומם הכרונולוגי הנכון על ציר הזמן." },
+    { key: "kings", icon: ICONS.crown, accent: "var(--judah)", title: "מלכי ישראל ויהודה", desc: "גרף זמן מלא: כל המלכים על ציר משותף, לפי שנות מלכותם, הנביאים בני זמנם והאירועים שבתקופתם." },
+    { key: "archaeology", icon: ICONS.stele, accent: "var(--ev-camp)", title: "ממצאים, מצורים וביצורים", desc: "מסעות וקרבות, כתובות וחרסים, תבליטים וחומות — מה נמצא, מתי, ובימי איזה מלך." },
+    { key: "judaism", icon: ICONS.scroll, accent: "var(--ev-fort)", title: "יהדות — ספרים, חכמים ומרכזים", desc: "שרשרת אחת מחתימת התנ\"ך ועד ימינו: מה נכתב, בידי מי, מתי, איפה — ולאן נדד מרכז התורה." },
   ];
   cards.forEach((c) => {
     const card = document.createElement("div");
     card.className = "mode-card";
     card.style.setProperty("--mc", c.accent);
     card.innerHTML = '<div class="icon-badge">' + c.icon + '</div><h3>' + c.title + '</h3><p>' + c.desc + '</p>';
-    card.onclick = c.fn;
+    card.onclick = () => showEntryView(c.key, true);
     grid.appendChild(card);
   });
   wrap.appendChild(grid);
   app.appendChild(wrap);
 }
 
-renderHome();
+if (ENTRY_VIEWS[activeEntryView]) showEntryView(activeEntryView, false);
+else renderHome();
 
 </script>
 </body>
